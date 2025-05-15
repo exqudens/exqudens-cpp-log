@@ -15,7 +15,7 @@
 
 namespace exqudens {
 
-    class UnitTests: public testing::Test {
+    class LogUnitTests: public testing::Test {
 
         protected:
 
@@ -23,7 +23,7 @@ namespace exqudens {
 
     };
 
-    TEST_F(UnitTests, test1) {
+    TEST_F(LogUnitTests, test_1) {
         try {
             std::string testGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
             std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();

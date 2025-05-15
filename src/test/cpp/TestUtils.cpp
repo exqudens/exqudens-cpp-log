@@ -247,6 +247,14 @@ std::string TestUtils::join(const std::vector<std::string>& value, const std::st
     }
 }
 
+std::string TestUtils::toString(const std::vector<std::string>& value) {
+    try {
+        return TestUtils::join(value, "', '", "['", "']");
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
 std::string TestUtils::toString(const std::any& value) {
     try {
         std::ostringstream out;

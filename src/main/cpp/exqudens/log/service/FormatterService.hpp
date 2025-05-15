@@ -2,6 +2,8 @@
 
 #include <cstddef>
 #include <string>
+#include <vector>
+#include <map>
 
 #include "exqudens/log/export.hpp"
 #include "exqudens/log/model/Formatter.hpp"
@@ -12,7 +14,8 @@ namespace exqudens::log::service {
 
         private:
 
-            std::string format = {};
+            std::vector<std::string> formatParts = {};
+            std::map<std::string, exqudens::log::model::Formatter::Parameter> parameters = {};
             bool configured = false;
 
         public:

@@ -14,7 +14,9 @@
 #include "TestUtils.hpp"
 
 // include test files
-#include "unit/UnitTests.hpp"
+#include "unit/FormatterUtilsUnitTests.hpp"
+#include "unit/FormatterServiceUnitTests.hpp"
+#include "unit/LogUnitTests.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 

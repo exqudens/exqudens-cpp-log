@@ -51,6 +51,8 @@ class TestUtils {
 
         static std::string join(const std::vector<std::string>& value, const std::string& delimiter = "", const std::string& prefix = "", const std::string& suffix = "");
 
+        static std::string toString(const std::vector<std::string>& value);
+
         static std::string toString(const std::any& value);
 
         static std::string toString(const std::map<std::string, std::any>& value);

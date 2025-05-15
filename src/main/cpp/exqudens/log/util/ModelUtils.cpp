@@ -17,7 +17,7 @@ namespace exqudens::log::util {
                 throw std::runtime_error(CALL_INFO + ": configuration missing logger id: '" + exqudens::log::model::Constant::LOGGER_ID_ROOT + "'");
             }
 
-            for (const std::pair<std::string, exqudens::log::model::LoggerConfiguration>& loggerEntry : configuration.loggers) {
+            for (const auto& loggerEntry : configuration.loggers) {
                 exqudens::log::model::Logger logger = {};
                 logger.id = loggerEntry.second.id;
                 logger.level = loggerEntry.second.level;
@@ -42,6 +42,18 @@ namespace exqudens::log::util {
                     exqudens::log::model::Formatter formatter = {};
                     formatter.id = formatterId;
                     formatter.format = configuration.formatters.at(formatter.id).format;
+                    formatter.parameters = {};
+                    for (const auto& formatterParameterEntry : configuration.formatters.at(formatter.id).parameters) {
+                        exqudens::log::model::Formatter::Parameter parameter = {};
+                        parameter.id = formatterParameterEntry.second.id;
+                        parameter.format = formatterParameterEntry.second.format;
+                        parameter.seconds = formatterParameterEntry.second.seconds;
+                        parameter.base = formatterParameterEntry.second.base;
+                        parameter.name = formatterParameterEntry.second.name;
+                        parameter.size = formatterParameterEntry.second.size;
+                        parameter.reverse = formatterParameterEntry.second.reverse;
+                        formatter.parameters[parameter.id] = parameter;
+                    }
                     handler.formatter = formatter;
 
                     logger.handlers.emplace_back(handler);

@@ -384,7 +384,6 @@ add_library("${PROJECT_NAME}"
     "src/main/cpp/exqudens/log/model/LoggerConfiguration.hpp"
     "src/main/cpp/exqudens/log/model/Configuration.hpp"
     "src/main/cpp/exqudens/log/model/Constant.hpp"
-    "src/main/cpp/exqudens/log/model/Event.hpp"
 
     "src/main/cpp/exqudens/log/service/FormatterService.hpp"
     "src/main/cpp/exqudens/log/service/FormatterService.cpp"
@@ -411,6 +410,8 @@ add_library("${PROJECT_NAME}"
     "src/main/cpp/exqudens/log/util/Utils.cpp"
     "src/main/cpp/exqudens/log/util/ModelUtils.hpp"
     "src/main/cpp/exqudens/log/util/ModelUtils.cpp"
+    "src/main/cpp/exqudens/log/util/FormatterUtils.hpp"
+    "src/main/cpp/exqudens/log/util/FormatterUtils.cpp"
 
     "src/main/cpp/exqudens/Log.hpp"
     "src/main/cpp/exqudens/Log.cpp"
@@ -534,7 +535,9 @@ if(NOT "${SKIP_TEST}")
         "src/test/cpp/TestUtils.cpp"
         "src/test/cpp/TestApplication.hpp"
         "src/test/cpp/TestApplication.cpp"
-        "src/test/cpp/unit/UnitTests.hpp"
+        "src/test/cpp/unit/FormatterUtilsUnitTests.hpp"
+        "src/test/cpp/unit/FormatterServiceUnitTests.hpp"
+        "src/test/cpp/unit/LogUnitTests.hpp"
     )
     target_include_directories("test-lib" PUBLIC
         "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/test/cpp>"
@@ -697,11 +700,11 @@ add_custom_target("vscode"
             LAUNCH_TEMPLATE_FILE "${PROJECT_SOURCE_DIR}/src/test/resources/vscode/launch.json"
             LAUNCH_FILE "${PROJECT_SOURCE_DIR}/.vscode/launch.json"
             LAUNCH_TESTS_FILE "${PROJECT_BINARY_DIR}/test/bin/tests.json"
-            #LAUNCH_DEFAULT_TEST "UnitTests.test1"
+            LAUNCH_DEFAULT_TEST "FormatterServiceUnitTests.test_1"
 
             LAUNCH_ENV_PATH "${PROJECT_BINARY_DIR}/test/bin"
             LAUNCH_ADD_OPTIONS "*.*"
-    DEPENDS "test-app"
+    DEPENDS "${PROJECT_NAME}" "test-app"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     USES_TERMINAL
     VERBATIM
