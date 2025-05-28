@@ -379,11 +379,15 @@ endif()
 configure_file("${PROJECT_SOURCE_DIR}/versions.hpp.in" "${PROJECT_BINARY_DIR}/generated/src/main/cpp/${BASE_DIR}/versions.hpp" @ONLY NEWLINE_STYLE UNIX)
 
 add_library("${PROJECT_NAME}"
+    "src/main/cpp/exqudens/log/model/Constant.hpp"
     "src/main/cpp/exqudens/log/model/FormatterConfiguration.hpp"
     "src/main/cpp/exqudens/log/model/HandlerConfiguration.hpp"
     "src/main/cpp/exqudens/log/model/LoggerConfiguration.hpp"
     "src/main/cpp/exqudens/log/model/Configuration.hpp"
-    "src/main/cpp/exqudens/log/model/Constant.hpp"
+    "src/main/cpp/exqudens/log/model/Formatter.hpp"
+    "src/main/cpp/exqudens/log/model/Handler.hpp"
+    "src/main/cpp/exqudens/log/model/Logger.hpp"
+    "src/main/cpp/exqudens/log/model/Data.hpp"
 
     "src/main/cpp/exqudens/log/service/FormatterService.hpp"
     "src/main/cpp/exqudens/log/service/FormatterService.cpp"
@@ -535,6 +539,7 @@ if(NOT "${SKIP_TEST}")
         "src/test/cpp/TestUtils.cpp"
         "src/test/cpp/TestApplication.hpp"
         "src/test/cpp/TestApplication.cpp"
+        "src/test/cpp/mock/MockHandlerService.hpp"
         "src/test/cpp/unit/FormatterUtilsUnitTests.hpp"
         "src/test/cpp/unit/FormatterServiceUnitTests.hpp"
         "src/test/cpp/unit/LogUnitTests.hpp"
@@ -700,7 +705,7 @@ add_custom_target("vscode"
             LAUNCH_TEMPLATE_FILE "${PROJECT_SOURCE_DIR}/src/test/resources/vscode/launch.json"
             LAUNCH_FILE "${PROJECT_SOURCE_DIR}/.vscode/launch.json"
             LAUNCH_TESTS_FILE "${PROJECT_BINARY_DIR}/test/bin/tests.json"
-            LAUNCH_DEFAULT_TEST "FormatterServiceUnitTests.test_1"
+            LAUNCH_DEFAULT_TEST "LogUnitTests.test_1"
 
             LAUNCH_ENV_PATH "${PROJECT_BINARY_DIR}/test/bin"
             LAUNCH_ADD_OPTIONS "*.*"

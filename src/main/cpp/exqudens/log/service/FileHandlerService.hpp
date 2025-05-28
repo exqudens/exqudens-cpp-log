@@ -4,11 +4,11 @@
 
 namespace exqudens::log::service {
 
-    class EXQUDENS_LOG_EXPORT FileHandlerService : virtual public HandlerService {
+    class EXQUDENS_LOG_EXPORT FileHandlerService : public HandlerService {
 
         protected:
 
-            void write(const std::string& value) override;
+            void writeString(const std::string& value) override;
 
     };
 

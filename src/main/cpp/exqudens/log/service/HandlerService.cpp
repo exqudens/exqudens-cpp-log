@@ -26,7 +26,8 @@ namespace exqudens::log::service {
         return configured;
     }
 
-    void HandlerService::write(
+    std::string HandlerService::toString(
+        exqudens::log::model::Data& data,
         const std::string& file,
         const size_t line,
         const std::string& function,
@@ -35,7 +36,8 @@ namespace exqudens::log::service {
         const std::string& message
     ) {
         try {
-            std::string event = formatter->toString(
+            std::string result = formatter->toString(
+                data,
                 file,
                 line,
                 function,
@@ -43,7 +45,40 @@ namespace exqudens::log::service {
                 level,
                 message
             );
-            write(event);
+            return result;
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(CALL_INFO));
+        }
+    }
+
+    void HandlerService::writeString(const std::string& value) {
+        try {
+            throw std::runtime_error(CALL_INFO + ": unimplemented");
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(CALL_INFO));
+        }
+    }
+
+    void HandlerService::write(
+        exqudens::log::model::Data& data,
+        const std::string& file,
+        const size_t line,
+        const std::string& function,
+        const std::string& id,
+        const unsigned short level,
+        const std::string& message
+    ) {
+        try {
+            std::string event = toString(
+                data,
+                file,
+                line,
+                function,
+                id,
+                level,
+                message
+            );
+            writeString(event);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }

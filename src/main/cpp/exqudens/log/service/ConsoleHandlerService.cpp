@@ -8,7 +8,7 @@
 
 namespace exqudens::log::service {
 
-    void ConsoleHandlerService::write(const std::string& value) {
+    void ConsoleHandlerService::writeString(const std::string& value) {
         try {
             std::cout << value << std::endl;
         } catch (...) {

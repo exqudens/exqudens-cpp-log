@@ -7,7 +7,7 @@
 
 namespace exqudens::log::service {
 
-    void FileHandlerService::write(const std::string& value) {
+    void FileHandlerService::writeString(const std::string& value) {
         try {
             throw std::runtime_error(CALL_INFO + ": TODO");
         } catch (...) {

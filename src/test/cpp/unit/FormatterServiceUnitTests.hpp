@@ -42,6 +42,7 @@ namespace exqudens {
             std::map<std::string, exqudens::log::model::Logger> loggerMap = {};
             exqudens::log::model::Formatter config = {};
             exqudens::log::service::FormatterService service = {};
+            exqudens::log::model::Data data = {};
             std::string expected = {};
             std::string actual = {};
 
@@ -59,6 +60,7 @@ namespace exqudens {
             ASSERT_TRUE(service.isConfigured());
 
             actual = service.toString(
+                data,
                 __FILE__,
                 __LINE__,
                 __FUNCTION__,

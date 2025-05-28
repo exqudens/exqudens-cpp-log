@@ -10,6 +10,9 @@ namespace exqudens::log::model {
 
         std::string id;
         std::string type;
+        std::string stream = {};
+        std::string file = {};
+        size_t size = 0;
         std::string formatter;
 
     };

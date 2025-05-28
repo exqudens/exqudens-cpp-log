@@ -20,7 +20,7 @@ namespace exqudens::log::service {
 
                 if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE) {
                     handlerService = ServiceFactory::getInstance().createConsoleHandler(handlerConfig);
-                } else if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE) {
+                } else if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_FILE) {
                     handlerService = ServiceFactory::getInstance().createFileHandler(handlerConfig);
                 } else {
                     handlerService = ServiceFactory::getInstance().createHandler(handlerConfig);
@@ -55,8 +55,10 @@ namespace exqudens::log::service {
             if (level > this->level) {
                 return;
             }
+            exqudens::log::model::Data data = {};
             for (const std::shared_ptr<IHandlerService>& handler : handlers) {
                 handler->write(
+                    data,
                     file,
                     line,
                     function,

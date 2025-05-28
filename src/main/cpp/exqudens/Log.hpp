@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <set>
 #include <map>
 
@@ -22,9 +23,19 @@ namespace exqudens {
 
             static std::map<std::string, exqudens::log::model::FormatterConfiguration> defaultFormatterConfigurations();
 
-            static log::model::Configuration defaultConfiguration(const std::set<std::string>& loggerIds = {});
+            static std::map<std::string, exqudens::log::model::HandlerConfiguration> defaultHandlerConfigurations(const std::string& formatter);
+
+            static std::map<std::string, exqudens::log::model::LoggerConfiguration> defaultLoggerConfigurations(const std::vector<std::string>& handlers, const std::set<std::string>& loggerIds = {});
+
+            static exqudens::log::model::Configuration defaultConfiguration(const std::set<std::string>& loggerIds = {});
 
             static std::map<unsigned short, std::string> loggerLevelIdNameMap() noexcept;
+
+            static std::string configure(const std::set<std::string>& loggerIds = {});
+
+            static bool isConfigured();
+
+            static void reset();
 
     };
 

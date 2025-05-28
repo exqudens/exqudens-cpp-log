@@ -32,6 +32,9 @@ namespace exqudens::log::util {
 
                     handler.id = handlerId;
                     handler.type = configuration.handlers.at(handler.id).type;
+                    handler.stream = configuration.handlers.at(handler.id).stream;
+                    handler.file = configuration.handlers.at(handler.id).file;
+                    handler.size = configuration.handlers.at(handler.id).size;
 
                     std::string formatterId = configuration.handlers.at(handler.id).formatter;
 

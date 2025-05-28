@@ -26,6 +26,7 @@ namespace exqudens::log::service {
     }
 
     std::string FormatterService::toString(
+        exqudens::log::model::Data& data,
         const std::string& file,
         const size_t line,
         const std::string& function,
@@ -43,7 +44,11 @@ namespace exqudens::log::service {
                     std::string value = {};
                     if (formatPart == exqudens::log::model::Constant::FORMATTER_FORMAT_PLACE_HOLDER_TIMESTAMP) {
                         exqudens::log::model::Formatter::Parameter parameter = parameters.at(exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_TIMESTAMP);
-                        value = exqudens::log::util::FormatterUtils::getCurrentTimestampString(
+                        if (!data.timePoint.has_value()) {
+                            data.timePoint.emplace(std::chrono::system_clock::now());
+                        }
+                        value = exqudens::log::util::FormatterUtils::toStringTimestamp(
+                            data.timePoint.value(),
                             parameter.format,
                             parameter.seconds,
                             exqudens::log::model::Constant::FORMATTER_PARAMETER_TIMESTAMP_SECONDS_DEVIDER_MAP,
@@ -61,7 +66,11 @@ namespace exqudens::log::service {
                         );
                     } else if (formatPart == exqudens::log::model::Constant::FORMATTER_FORMAT_PLACE_HOLDER_THREAD) {
                         exqudens::log::model::Formatter::Parameter parameter = parameters.at(exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_THREAD);
-                        value = exqudens::log::util::FormatterUtils::getCurrentThreadString(
+                        if (!data.threadId.has_value()) {
+                            data.threadId.emplace(std::this_thread::get_id());
+                        }
+                        value = exqudens::log::util::FormatterUtils::toStringThread(
+                            data.threadId.value(),
                             parameter.size,
                             parameter.reverse
                         );

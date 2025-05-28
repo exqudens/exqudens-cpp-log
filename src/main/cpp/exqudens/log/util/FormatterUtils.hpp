@@ -40,9 +40,9 @@ namespace exqudens::log::util {
 
             static std::string toStringMessage(const std::string& value, size_t size, bool reverse);
 
-            static std::string getCurrentTimestampString(const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse);
+            //static std::string getCurrentTimestampString(const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse);
 
-            static std::string getCurrentThreadString(size_t size, bool reverse);
+            //static std::string getCurrentThreadString(size_t size, bool reverse);
 
         private:
 

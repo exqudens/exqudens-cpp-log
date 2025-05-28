@@ -7,6 +7,7 @@
 
 #include "exqudens/log/export.hpp"
 #include "exqudens/log/model/Formatter.hpp"
+#include "exqudens/log/model/Data.hpp"
 
 namespace exqudens::log::service {
 
@@ -27,6 +28,7 @@ namespace exqudens::log::service {
             bool isConfigured();
 
             std::string toString(
+                exqudens::log::model::Data& data,
                 const std::string& file,
                 const size_t line,
                 const std::string& function,

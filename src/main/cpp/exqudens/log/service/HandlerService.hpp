@@ -9,9 +9,9 @@
 
 namespace exqudens::log::service {
 
-    class EXQUDENS_LOG_EXPORT HandlerService : virtual public IHandlerService {
+    class EXQUDENS_LOG_EXPORT HandlerService : public IHandlerService {
 
-        private:
+        protected:
 
             std::shared_ptr<FormatterService> formatter = nullptr;
             bool configured = false;
@@ -24,7 +24,20 @@ namespace exqudens::log::service {
 
             bool isConfigured() override;
 
+            std::string toString(
+                exqudens::log::model::Data& data,
+                const std::string& file,
+                const size_t line,
+                const std::string& function,
+                const std::string& id,
+                const unsigned short level,
+                const std::string& message
+            ) override;
+
+            void writeString(const std::string& value) override;
+
             void write(
+                exqudens::log::model::Data& data,
                 const std::string& file,
                 const size_t line,
                 const std::string& function,
@@ -34,10 +47,6 @@ namespace exqudens::log::service {
             ) override;
 
             ~HandlerService() override;
-
-        protected:
-
-            virtual void write(const std::string& value) = 0;
 
     };
 
