@@ -102,13 +102,14 @@ namespace exqudens {
         }
     }
 
-    std::map<std::string, exqudens::log::model::HandlerConfiguration> Log::defaultHandlerConfigurations(const std::string& formatter) {
+    std::map<std::string, exqudens::log::model::HandlerConfiguration> Log::defaultHandlerConfigurations(const std::string& file, size_t fileSize, const std::string& formatter) {
         try {
             std::map<std::string, exqudens::log::model::HandlerConfiguration> result = {};
 
             exqudens::log::model::HandlerConfiguration consoleHandler = {};
             consoleHandler.id = exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE;
             consoleHandler.type = exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE;
+            consoleHandler.stream = exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE_STREAM_OUT;
             consoleHandler.formatter = formatter;
 
             result[consoleHandler.id] = consoleHandler;
@@ -116,6 +117,8 @@ namespace exqudens {
             exqudens::log::model::HandlerConfiguration fileHandler = {};
             fileHandler.id = exqudens::log::model::Constant::HANDLER_TYPE_FILE;
             fileHandler.type = exqudens::log::model::Constant::HANDLER_TYPE_FILE;
+            fileHandler.file = file;
+            fileHandler.size = fileSize;
             fileHandler.formatter = formatter;
 
             result[fileHandler.id] = fileHandler;
@@ -152,13 +155,13 @@ namespace exqudens {
         }
     }
 
-    exqudens::log::model::Configuration Log::defaultConfiguration(const std::set<std::string>& loggerIds) {
+    exqudens::log::model::Configuration Log::defaultConfiguration(const std::string& file, size_t fileSize, const std::set<std::string>& loggerIds) {
         try {
             exqudens::log::model::Configuration output = {};
 
             output.id = exqudens::log::model::Constant::CONFIGURATION_ID_DEFAULT;
             output.formatters = defaultFormatterConfigurations();
-            output.handlers = defaultHandlerConfigurations(exqudens::log::model::Constant::FORMATTER_ID_FORMATTER);
+            output.handlers = defaultHandlerConfigurations(file, fileSize, exqudens::log::model::Constant::FORMATTER_ID_FORMATTER);
             output.loggers = defaultLoggerConfigurations({exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE, exqudens::log::model::Constant::HANDLER_TYPE_FILE}, loggerIds);
 
             return output;
@@ -171,9 +174,9 @@ namespace exqudens {
         return exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP;
     }
 
-    std::string Log::configure(const std::set<std::string>& loggerIds) {
+    std::string Log::configure(const std::string &file, size_t fileSize, const std::set<std::string>& loggerIds) {
         try {
-            exqudens::log::model::Configuration configuration = defaultConfiguration(loggerIds);
+            exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, loggerIds);
             return exqudens::log::api::Logging::configure(configuration);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));

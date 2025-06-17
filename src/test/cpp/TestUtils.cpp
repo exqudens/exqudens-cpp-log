@@ -26,13 +26,62 @@ void TestUtils::init(const std::vector<std::string>& input) {
                 std::vector<std::string> parts = split(input.at(i), "=");
                 if (parts.size() > 1) {
                     std::filesystem::path path = std::filesystem::path(parts.at(1));
-                    data.executableFile = path.generic_string();
-                    if (!path.parent_path().empty()) {
-                        data.executableDir = path.parent_path().generic_string();
-                    }
+                    data.projectBinaryDir = path.generic_string();
                 }
             }
         }
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
+std::string TestUtils::getExecutableFile() {
+    try {
+        return data.executableFile.value();
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
+std::string TestUtils::getExecutableDir() {
+    try {
+        return data.executableDir.value();
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
+std::string TestUtils::getProjectBinaryDir() {
+    try {
+        return data.projectBinaryDir.value();
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
+std::string TestUtils::getTestOutputDir(const std::string& testGroup, const std::string& testCase) {
+    try {
+        std::filesystem::path result(getProjectBinaryDir());
+        result = result / "test" / "output" / testGroup / testCase;
+        return result.generic_string();
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
+std::string TestUtils::getProjectSourceDir() {
+    try {
+        return std::filesystem::path(__FILE__).parent_path().parent_path().parent_path().parent_path().generic_string();
+    } catch (...) {
+        std::throw_with_nested(std::runtime_error(CALL_INFO));
+    }
+}
+
+std::string TestUtils::getTestInputDir(const std::string& testGroup, const std::string& testCase) {
+    try {
+        std::filesystem::path result(getProjectSourceDir());
+        result = result / "src" / "test" / "resources" / testGroup / testCase;
+        return result.generic_string();
     } catch (...) {
         std::throw_with_nested(std::runtime_error(CALL_INFO));
     }

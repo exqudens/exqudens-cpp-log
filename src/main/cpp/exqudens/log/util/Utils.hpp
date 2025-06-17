@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <exception>
 
 #include "exqudens/log/export.hpp"
@@ -23,6 +24,8 @@ namespace exqudens::log::util {
             static std::string toString(const std::exception& exception) noexcept;
 
             static std::string join(const std::string& prefix = "", const std::vector<std::string>& value = {}, const std::string& delimiter = "", const std::string& suffix = "") noexcept;
+
+            static std::string joinSet(const std::string& prefix = "", const std::set<std::string>& value = {}, const std::string& delimiter = "", const std::string& suffix = "") noexcept;
 
     };
 

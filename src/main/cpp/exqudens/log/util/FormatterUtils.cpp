@@ -183,24 +183,6 @@ namespace exqudens::log::util {
         }
     }
 
-    /* std::string FormatterUtils::getCurrentTimestampString(const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse) {
-        try {
-            std::chrono::system_clock::time_point value = std::chrono::system_clock::now();
-            return toStringTimestamp(value, format, seconds, secondsDeviderMap, size, reverse);
-        } catch (...) {
-            std::throw_with_nested(std::runtime_error(CALL_INFO));
-        }
-    } */
-
-    /* std::string FormatterUtils::getCurrentThreadString(size_t size, bool reverse) {
-        try {
-            std::thread::id value = std::this_thread::get_id();
-            return toStringThread(value, size, reverse);
-        } catch (...) {
-            std::throw_with_nested(std::runtime_error(CALL_INFO));
-        }
-    } */
-
     std::optional<std::pair<size_t, std::string>> FormatterUtils::splitFormatFind(const std::string& format, const std::vector<std::string>& targets) {
         try {
             std::optional<std::pair<size_t, std::string>> result = {};

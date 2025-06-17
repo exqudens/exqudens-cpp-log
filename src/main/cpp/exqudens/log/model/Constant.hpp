@@ -87,6 +87,13 @@ namespace exqudens::log::model {
         inline static const std::string FORMATTER_ID_FORMATTER = "formatter";
 
         inline static const std::string HANDLER_TYPE_CONSOLE = "console";
+        inline static const std::string HANDLER_TYPE_CONSOLE_STREAM_OUT = "stdout";
+        inline static const std::string HANDLER_TYPE_CONSOLE_STREAM_ERR = "stderr";
+        inline static const std::set<std::string> HANDLER_TYPE_CONSOLE_STREAMS = {
+            HANDLER_TYPE_CONSOLE_STREAM_OUT,
+            HANDLER_TYPE_CONSOLE_STREAM_ERR
+        };
+
         inline static const std::string HANDLER_TYPE_FILE = "file";
 
         inline static const std::string LOGGER_ID_ROOT = "root";

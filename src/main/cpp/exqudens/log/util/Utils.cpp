@@ -87,7 +87,21 @@ namespace exqudens::log::util {
                         return a + (a.empty() ? "" : delimiter) + b;
                     }
             );
-            return result;
+            return prefix + result + suffix;
+        } catch (...) {
+            return prefix + suffix;
+        }
+    }
+
+    std::string Utils::joinSet(
+        const std::string& prefix,
+        const std::set<std::string>& value,
+        const std::string& delimiter,
+        const std::string& suffix
+    ) noexcept {
+        try {
+            std::vector<std::string> vectorValue(value.begin(), value.end());
+            return join(prefix, vectorValue, delimiter, suffix);
         } catch (...) {
             return prefix + suffix;
         }

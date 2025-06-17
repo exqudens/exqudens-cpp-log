@@ -7,7 +7,9 @@
 #include <map>
 #include <exception>
 
-class TestUtils {
+#include "test_lib_export.hpp"
+
+class TEST_LIB_EXPORT TestUtils {
 
     private:
 
@@ -24,6 +26,18 @@ class TestUtils {
     public:
 
         static void init(const std::vector<std::string>& input);
+
+        static std::string getExecutableFile();
+
+        static std::string getExecutableDir();
+
+        static std::string getProjectBinaryDir();
+
+        static std::string getTestOutputDir(const std::string& testGroup, const std::string& testCase);
+
+        static std::string getProjectSourceDir();
+
+        static std::string getTestInputDir(const std::string& testGroup, const std::string& testCase);
 
         static std::vector<std::string> toStringVector(const std::exception& exception, std::vector<std::string> previous = {});
 

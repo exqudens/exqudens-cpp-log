@@ -14,6 +14,9 @@ namespace exqudens::log::service {
         protected:
 
             std::shared_ptr<FormatterService> formatter = nullptr;
+            std::string stream = {};
+            std::string file = {};
+            size_t size = 0;
             bool configured = false;
 
         public:

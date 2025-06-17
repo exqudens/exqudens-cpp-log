@@ -18,10 +18,6 @@ namespace exqudens::log::util {
 
         public:
 
-            FormatterUtils() = delete;
-
-            ~FormatterUtils() = delete;
-
             static std::vector<std::string> splitFormat(const std::string& format, const std::set<std::string>& targets, char escape);
 
             static std::string toStringTimestamp(const std::chrono::system_clock::time_point& value, const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse);
@@ -40,9 +36,9 @@ namespace exqudens::log::util {
 
             static std::string toStringMessage(const std::string& value, size_t size, bool reverse);
 
-            //static std::string getCurrentTimestampString(const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse);
+            FormatterUtils() = delete;
 
-            //static std::string getCurrentThreadString(size_t size, bool reverse);
+            ~FormatterUtils() = delete;
 
         private:
 
