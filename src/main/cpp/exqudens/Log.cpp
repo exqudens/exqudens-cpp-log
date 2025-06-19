@@ -129,21 +129,31 @@ namespace exqudens {
         }
     }
 
-    std::map<std::string, exqudens::log::model::LoggerConfiguration> Log::defaultLoggerConfigurations(const std::vector<std::string>& handlers, const std::set<std::string>& loggerIds) {
+    std::map<std::string, exqudens::log::model::LoggerConfiguration> Log::defaultLoggerConfigurations(const std::vector<std::string>& handlers, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
         try {
             std::map<std::string, exqudens::log::model::LoggerConfiguration> result = {};
 
             exqudens::log::model::LoggerConfiguration logger = {};
             logger.id = exqudens::log::model::Constant::LOGGER_ID_ROOT;
-            logger.level = 999;
+            unsigned short loggerLevel = exqudens::log::model::Constant::LOGGER_LEVEL_ID_INFO;
+            if (loggerIdLevelMap.contains(logger.id) && exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.contains(loggerIdLevelMap.at(logger.id))) {
+                loggerLevel = loggerIdLevelMap.at(logger.id);
+            }
+            logger.level = loggerLevel;
             logger.handlers = handlers;
 
             result[logger.id] = logger;
 
-            for (const std::string& loggerId : loggerIds) {
+            for (const std::pair<std::string, unsigned short>& entry : loggerIdLevelMap) {
+                if (entry.first == logger.id) {
+                    continue;
+                }
                 exqudens::log::model::LoggerConfiguration loggerConfiguration = {};
-                loggerConfiguration.id = loggerId;
+                loggerConfiguration.id = entry.first;
                 loggerConfiguration.level = logger.level;
+                if (exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.contains(entry.second)) {
+                    loggerConfiguration.level = entry.second;
+                }
                 loggerConfiguration.handlers = logger.handlers;
 
                 result[loggerConfiguration.id] = loggerConfiguration;
@@ -155,14 +165,14 @@ namespace exqudens {
         }
     }
 
-    exqudens::log::model::Configuration Log::defaultConfiguration(const std::string& file, size_t fileSize, const std::set<std::string>& loggerIds) {
+    exqudens::log::model::Configuration Log::defaultConfiguration(const std::string& file, size_t fileSize, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
         try {
             exqudens::log::model::Configuration output = {};
 
             output.id = exqudens::log::model::Constant::CONFIGURATION_ID_DEFAULT;
             output.formatters = defaultFormatterConfigurations();
             output.handlers = defaultHandlerConfigurations(file, fileSize, exqudens::log::model::Constant::FORMATTER_ID_FORMATTER);
-            output.loggers = defaultLoggerConfigurations({exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE, exqudens::log::model::Constant::HANDLER_TYPE_FILE}, loggerIds);
+            output.loggers = defaultLoggerConfigurations({exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE, exqudens::log::model::Constant::HANDLER_TYPE_FILE}, loggerIdLevelMap);
 
             return output;
         } catch (...) {
@@ -174,9 +184,9 @@ namespace exqudens {
         return exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP;
     }
 
-    std::string Log::configure(const std::string &file, size_t fileSize, const std::set<std::string>& loggerIds) {
+    std::string Log::configure(const std::string &file, size_t fileSize, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
         try {
-            exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, loggerIds);
+            exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, loggerIdLevelMap);
             return exqudens::log::api::Logging::configure(configuration);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));

@@ -42,10 +42,10 @@ namespace exqudens {
 
             std::string loggingFile = (testOutputDir / "log" / "log.txt").generic_string();
             size_t loggingFileSize = 300;
-            std::set<std::string> loggingIds = {
-                "test.logger.1"
+            std::map<std::string, unsigned short> loggerIdLevelMap = {
+                {"test.logger.1", 0}
             };
-            std::string loggingConfig = exqudens::Log::configure(loggingFile, loggingFileSize, loggingIds);
+            std::string loggingConfig = exqudens::Log::configure(loggingFile, loggingFileSize, loggerIdLevelMap);
             std::cout << LOGGER_ID << " loggingConfig: " << '"' << loggingConfig << '"' << std::endl;
 
             EXQUDENS_LOG_INFO("test.logger.1") << "Abc: 001";

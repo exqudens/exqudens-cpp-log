@@ -100,13 +100,20 @@ namespace exqudens::log::model {
 
         inline static const std::string CONFIGURATION_ID_DEFAULT = "default";
 
+        inline static const unsigned short LOGGER_LEVEL_ID_FATAL = 1;
+        inline static const unsigned short LOGGER_LEVEL_ID_ERROR = 2;
+        inline static const unsigned short LOGGER_LEVEL_ID_WARNING = 3;
+        inline static const unsigned short LOGGER_LEVEL_ID_INFO = 4;
+        inline static const unsigned short LOGGER_LEVEL_ID_DEBUG = 5;
+        inline static const unsigned short LOGGER_LEVEL_ID_TRACE = 6;
+
         inline static const std::map<unsigned short, std::string> LOGGER_LEVEL_ID_NAME_MAP = {
-            {1, "FATAL"},
-            {2, "ERROR"},
-            {3, "WARNING"},
-            {4, "INFO"},
-            {5, "DEBUG"},
-            {6, "TRACE"}
+            {LOGGER_LEVEL_ID_FATAL, "FATAL"},
+            {LOGGER_LEVEL_ID_ERROR, "ERROR"},
+            {LOGGER_LEVEL_ID_WARNING, "WARNING"},
+            {LOGGER_LEVEL_ID_INFO, "INFO"},
+            {LOGGER_LEVEL_ID_DEBUG, "DEBUG"},
+            {LOGGER_LEVEL_ID_TRACE, "TRACE"}
         };
 
     };
