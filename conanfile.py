@@ -26,7 +26,7 @@ class ConanConfiguration(ConanFile):
 
     def requirements(self):
         try:
-            self.requires("exqudens-cpp-log-api/1.0.0")
+            self.requires("exqudens-cpp-log-api/1.0.0", transitive_headers=True)
         except Exception as e:
             self.output.error(e)
             raise e

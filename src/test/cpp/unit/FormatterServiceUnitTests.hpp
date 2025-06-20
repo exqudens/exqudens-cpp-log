@@ -46,7 +46,7 @@ namespace exqudens {
             std::string expected = {};
             std::string actual = {};
 
-            configuration = Log::defaultConfiguration();
+            configuration = Log::defaultConfiguration("log/log.txt", 1073741824, {});
             loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(configuration);
             config = loggerMap.at(exqudens::log::model::Constant::LOGGER_ID_ROOT).handlers.at(0).formatter;
             //config.parameters[exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_TIMESTAMP].size = 10;

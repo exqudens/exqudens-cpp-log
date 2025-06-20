@@ -98,7 +98,7 @@ namespace exqudens::log::model {
 
         inline static const std::string LOGGER_ID_ROOT = "root";
 
-        inline static const std::string CONFIGURATION_ID_DEFAULT = "default";
+        inline static const std::string CONFIGURATION_ID_DEFAULT = "programmable";
 
         inline static const unsigned short LOGGER_LEVEL_ID_FATAL = 1;
         inline static const unsigned short LOGGER_LEVEL_ID_ERROR = 2;

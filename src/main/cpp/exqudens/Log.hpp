@@ -48,13 +48,13 @@ namespace exqudens {
 
             static std::map<std::string, exqudens::log::model::HandlerConfiguration> defaultHandlerConfigurations(const std::string& file, size_t fileSize, const std::string& formatter);
 
-            static std::map<std::string, exqudens::log::model::LoggerConfiguration> defaultLoggerConfigurations(const std::vector<std::string>& handlers, const std::map<std::string, unsigned short>& loggerIdLevelMap = {});
+            static std::map<std::string, exqudens::log::model::LoggerConfiguration> defaultLoggerConfigurations(const std::vector<std::string>& handlers, const std::map<std::string, unsigned short>& loggerIdLevelMap);
 
-            static exqudens::log::model::Configuration defaultConfiguration(const std::string& file = "log/log.txt", size_t fileSize = 1024, const std::map<std::string, unsigned short>& loggerIdLevelMap = {});
+            static exqudens::log::model::Configuration defaultConfiguration(const std::string& file, size_t fileSize, const std::map<std::string, unsigned short>& loggerIdLevelMap);
 
             static std::map<unsigned short, std::string> loggerLevelIdNameMap() noexcept;
 
-            static std::string configure(const std::string& file = "log/log.txt", size_t fileSize = 1024, const std::map<std::string, unsigned short>& loggerIdLevelMap = {});
+            static std::string configure(const std::string& file = "log/log.txt", size_t fileSize = 1073741824, const std::map<std::string, unsigned short>& loggerIdLevelMap = {});
 
             static bool isConfigured();
 
