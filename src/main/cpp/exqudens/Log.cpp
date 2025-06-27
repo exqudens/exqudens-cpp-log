@@ -184,6 +184,13 @@ namespace exqudens {
         return exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP;
     }
 
+    std::vector<std::pair<unsigned short, std::string>> Log::loggerLevelIdNameVector() noexcept {
+        return std::vector<std::pair<unsigned short, std::string>>(
+            exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.begin(),
+            exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.end()
+        );
+    }
+
     std::string Log::configure(const std::string &file, size_t fileSize, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
         try {
             exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, loggerIdLevelMap);

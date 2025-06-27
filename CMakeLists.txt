@@ -708,33 +708,35 @@ add_custom_target("cmake-install" ALL
     DEPENDS "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}-config.cmake"
 )
 
-add_custom_target("conan-export"
-    COMMAND "${CONAN_COMMAND}" "export-pkg"
-            "--output-folder" "${CMAKE_INSTALL_PREFIX}"
-            ${CONAN_SETTINGS}
-            ${CONAN_OPTIONS}
-            #"--user" "gitlab-group+gitlab-sub-group+${PROJECT_NAME}"
-            #"--channel" "stable"
-            "${PROJECT_SOURCE_DIR}/conanfile.py"
-    DEPENDS "cmake-install"
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    USES_TERMINAL
-    VERBATIM
-)
+if("${USE_CONAN}")
+    add_custom_target("conan-export"
+        COMMAND "${CONAN_COMMAND}" "export-pkg"
+                "--output-folder" "${CMAKE_INSTALL_PREFIX}"
+                ${CONAN_SETTINGS}
+                ${CONAN_OPTIONS}
+                #"--user" "gitlab-group+gitlab-sub-group+${PROJECT_NAME}"
+                #"--channel" "stable"
+                "${PROJECT_SOURCE_DIR}/conanfile.py"
+        DEPENDS "cmake-install"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        USES_TERMINAL
+        VERBATIM
+    )
 
-add_custom_target("conan-remove"
-    COMMAND "${CONAN_COMMAND}" "remove" "-c" "${PROJECT_NAME}/${PROJECT_VERSION}"
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    USES_TERMINAL
-    VERBATIM
-)
+    add_custom_target("conan-remove"
+        COMMAND "${CONAN_COMMAND}" "remove" "-c" "${PROJECT_NAME}/${PROJECT_VERSION}"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        USES_TERMINAL
+        VERBATIM
+    )
 
-add_custom_target("conan-list"
-    COMMAND "${CONAN_COMMAND}" "list" "${PROJECT_NAME}/${PROJECT_VERSION}:*"
-    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-    USES_TERMINAL
-    VERBATIM
-)
+    add_custom_target("conan-list"
+        COMMAND "${CONAN_COMMAND}" "list" "${PROJECT_NAME}/${PROJECT_VERSION}:*"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        USES_TERMINAL
+        VERBATIM
+    )
+endif()
 
 add_custom_target("vscode"
     COMMAND "${CMAKE_COMMAND}" "-P" "cmake/util.cmake" "--" "vscode"
