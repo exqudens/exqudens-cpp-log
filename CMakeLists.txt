@@ -24,7 +24,7 @@ if("${CMAKE_UTIL_FILE}" STREQUAL "")
                     COMMAND_ERROR_IS_FATAL "ANY"
                 )]]
                 execute_process(
-                    COMMAND "${CONAN_COMMAND}" "install" "--tool-requires=exqudens-cmake/2.0.1" "--deployer" "direct_deploy" "--deployer-folder" "${CMAKE_SOURCE_DIR}/build/dependencies"
+                    COMMAND "${CONAN_COMMAND}" "install" "--tool-requires=exqudens-cmake/0.0.1" "--deployer" "direct_deploy" "--deployer-folder" "${CMAKE_SOURCE_DIR}/build/dependencies"
                     COMMAND_ECHO "STDERR"
                     ENCODING "UTF-8"
                     COMMAND_ERROR_IS_FATAL "ANY"
@@ -54,15 +54,15 @@ include("${CMAKE_UTIL_FILE}")
 include("${CMAKE_SOURCE_DIR}/cmake/util.cmake")
 
 string(REPLACE "." ";" PRESET_NAME_ELEMENTS "${PRESET_NAME}")
-if("msvc-16-x64-x64" IN_LIST "PRESET_NAME_ELEMENTS")
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/../msvc-16-x64-x64-toolchain.cmake")
+if("msvc-x64-x64" IN_LIST "PRESET_NAME_ELEMENTS")
+    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/../msvc-x64-x64-toolchain.cmake")
         set_msvc_toolchain(TOOLCHAIN_CONTENT
             PROCESSOR "x86_64"
             OS "${CMAKE_HOST_SYSTEM_NAME}"
-            VERSION "16"
+            VERSION "17"
             HOST "x64"
             TARGET "x64"
-            OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/../msvc-16-x64-x64-toolchain.cmake"
+            OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/../msvc-x64-x64-toolchain.cmake"
         )
     endif()
 elseif("gcc" IN_LIST PRESET_NAME_ELEMENTS)
