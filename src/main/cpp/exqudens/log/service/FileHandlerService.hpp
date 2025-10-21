@@ -6,7 +6,7 @@
 
 namespace exqudens::log::service {
 
-    class EXQUDENS_LOG_EXPORT FileHandlerService : public HandlerService {
+    class EXQUDENS_LOG_API_EXPORT FileHandlerService : public HandlerService {
 
         private:
 

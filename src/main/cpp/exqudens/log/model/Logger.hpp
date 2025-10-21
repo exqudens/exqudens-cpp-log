@@ -8,7 +8,7 @@
 
 namespace exqudens::log::model {
 
-    struct EXQUDENS_LOG_EXPORT Logger {
+    struct EXQUDENS_LOG_API_EXPORT Logger {
 
         std::string id;
         unsigned short level;

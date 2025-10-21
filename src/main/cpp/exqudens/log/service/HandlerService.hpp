@@ -9,7 +9,7 @@
 
 namespace exqudens::log::service {
 
-    class EXQUDENS_LOG_EXPORT HandlerService : public IHandlerService {
+    class EXQUDENS_LOG_API_EXPORT HandlerService : public IHandlerService {
 
         protected:
 

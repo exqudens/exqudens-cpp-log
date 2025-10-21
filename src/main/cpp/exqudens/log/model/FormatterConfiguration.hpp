@@ -8,9 +8,9 @@
 
 namespace exqudens::log::model {
 
-    struct EXQUDENS_LOG_EXPORT FormatterConfiguration {
+    struct EXQUDENS_LOG_API_EXPORT FormatterConfiguration {
 
-        struct EXQUDENS_LOG_EXPORT Parameter {
+        struct EXQUDENS_LOG_API_EXPORT Parameter {
 
             std::string id = {};
             std::string format = {};

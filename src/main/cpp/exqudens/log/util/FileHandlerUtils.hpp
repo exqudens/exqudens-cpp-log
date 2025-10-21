@@ -6,7 +6,7 @@
 
 namespace exqudens::log::util {
 
-    class EXQUDENS_LOG_EXPORT FileHandlerUtils {
+    class EXQUDENS_LOG_API_EXPORT FileHandlerUtils {
 
         public:
 

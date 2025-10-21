@@ -191,9 +191,18 @@ namespace exqudens {
         );
     }
 
-    std::string Log::configure(const std::string &file, size_t fileSize, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
+    std::string Log::configure(
+        const std::string &file,
+        size_t fileSize,
+        const std::set<std::string>& loggerIdSet,
+        const std::map<std::string, unsigned short>& loggerIdLevelMap
+    ) {
         try {
-            exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, loggerIdLevelMap);
+            std::map<std::string, unsigned short> internalLoggerIdLevelMap = loggerIdLevelMap;
+            for (const std::string& loggerId : loggerIdSet) {
+                internalLoggerIdLevelMap.try_emplace(loggerId, 0);
+            }
+            exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, internalLoggerIdLevelMap);
             return exqudens::log::api::Logging::configure(configuration);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));

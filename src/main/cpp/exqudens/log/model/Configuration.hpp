@@ -10,7 +10,7 @@
 
 namespace exqudens::log::model {
 
-    struct EXQUDENS_LOG_EXPORT Configuration {
+    struct EXQUDENS_LOG_API_EXPORT Configuration {
 
         std::string id;
         std::map<std::string, FormatterConfiguration> formatters;

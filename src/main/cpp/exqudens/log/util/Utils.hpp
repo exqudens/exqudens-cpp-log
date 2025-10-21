@@ -9,7 +9,7 @@
 
 namespace exqudens::log::util {
 
-    class EXQUDENS_LOG_EXPORT Utils {
+    class EXQUDENS_LOG_API_EXPORT Utils {
 
         public:
 

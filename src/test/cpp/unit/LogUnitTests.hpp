@@ -48,9 +48,11 @@ namespace exqudens {
                 {}
             );
 
-            std::string loggingConfig = exqudens::Log::configure({
-                "test.logger.1"
-            });
+            std::string loggingConfig = exqudens::Log::configure(
+                "log/log.txt",
+                1073741824,
+                {"test.logger.1"}
+            );
             std::cout << LOGGER_ID << " loggingConfig: " << '"' << loggingConfig << '"' << std::endl;
 
             EXQUDENS_LOG("test.logger.1", 4) << "Abc123!";

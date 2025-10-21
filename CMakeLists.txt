@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
 set(CMAKE_UTIL_FILE "" CACHE STRING "...")
 set(USE_CONAN "1" CACHE BOOL "...")
 
-message(STATUS "USE_CONAN: '${USE_CONAN}'")
+string(REPLACE "." ";" PRESET_NAME_ELEMENTS "${PRESET_NAME}")
 
 if("${USE_CONAN}")
     if("windows" IN_LIST "PRESET_NAME_ELEMENTS")
@@ -42,49 +42,44 @@ if("${CMAKE_UTIL_FILE}" STREQUAL "")
 endif()
 
 set(SKIP_TEST "0" CACHE BOOL "...")
-set(TEST_GROUP ".*UnitTests" CACHE STRING "...")
-set(TEST_CASE "all" CACHE STRING "...")
 
 message(STATUS "CMAKE_UTIL_FILE: '${CMAKE_UTIL_FILE}'")
 message(STATUS "SKIP_TEST: '${SKIP_TEST}'")
-message(STATUS "TEST_GROUP: '${TEST_GROUP}'")
-message(STATUS "TEST_CASE: '${TEST_CASE}'")
 
 include("${CMAKE_UTIL_FILE}")
 include("${CMAKE_SOURCE_DIR}/cmake/util.cmake")
 
-string(REPLACE "." ";" PRESET_NAME_ELEMENTS "${PRESET_NAME}")
 if("msvc-x64-x64" IN_LIST "PRESET_NAME_ELEMENTS")
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/../msvc-x64-x64-toolchain.cmake")
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/msvc-x64-x64-toolchain.cmake")
         set_msvc_toolchain(TOOLCHAIN_CONTENT
             PROCESSOR "x86_64"
             OS "${CMAKE_HOST_SYSTEM_NAME}"
             VERSION "17"
             HOST "x64"
             TARGET "x64"
-            OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/../msvc-x64-x64-toolchain.cmake"
+            OUTPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/msvc-x64-x64-toolchain.cmake"
         )
     endif()
 elseif("gcc" IN_LIST PRESET_NAME_ELEMENTS)
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/../gcc-toolchain.cmake")
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/gcc-toolchain.cmake")
         find_file(COMPILER_FILE NAMES "gcc" PATHS ENV GCC_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
         set_gnu_toolchain(TOOLCHAIN_CONTENT
             PROCESSOR "x86_64"
             OS "${CMAKE_HOST_SYSTEM_NAME}"
             PATH "${COMPILER_FILE}"
-            OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/../gcc-toolchain.cmake"
+            OUTPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/gcc-toolchain.cmake"
         )
     endif()
 endif()
 
 message(STATUS "CMAKE_TOOLCHAIN_FILE: '${CMAKE_TOOLCHAIN_FILE}'")
 
-file(READ "${CMAKE_CURRENT_SOURCE_DIR}/name-version.txt" INFO)
-string(REPLACE ":" ";" INFO_LIST "${INFO}")
-list(GET INFO_LIST 0 RAW_NAME)
-list(GET INFO_LIST 1 RAW_VERSION)
-string(STRIP "${RAW_NAME}" NAME)
-string(STRIP "${RAW_VERSION}" VERSION)
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/name-version.txt" NAME_VERSION_TXT)
+string(REPLACE ":" ";" NAME_VERSION_LIST "${NAME_VERSION_TXT}")
+list(GET "NAME_VERSION_LIST" "0" NAME)
+list(GET "NAME_VERSION_LIST" "1" VERSION)
+string(STRIP "${NAME}" NAME)
+string(STRIP "${VERSION}" VERSION)
 project("${NAME}" VERSION "${VERSION}" LANGUAGES "NONE")
 
 message(STATUS "PROJECT_NAME: '${PROJECT_NAME}'")
@@ -96,8 +91,9 @@ string(REPLACE "-" "/" BASE_DIR "${BASE_DIR}")
 
 message(STATUS "BASE_DIR: '${BASE_DIR}'")
 
-string(REPLACE "/" "_" BASE_NAME "${BASE_DIR}")
-string(TOUPPER "${BASE_NAME}" BASE_NAME)
+#[[string(REPLACE "/" "_" BASE_NAME "${BASE_DIR}")
+string(TOUPPER "${BASE_NAME}" BASE_NAME)]]
+set(BASE_NAME "EXQUDENS_LOG_API")
 
 message(STATUS "BASE_NAME: '${BASE_NAME}'")
 
@@ -175,19 +171,6 @@ endif()
 set(TARGET_CMAKE_INSTALL_DEPENDS_ON "${PROJECT_NAME}")
 if(NOT "${SKIP_TEST}")
     set(TARGET_CMAKE_INSTALL_DEPENDS_ON "cmake-test")
-    if("${TEST_GROUP}" STREQUAL "all" AND "${TEST_CASE}" STREQUAL "all")
-        set(TEST_REGEXP "^.+\\..+$")
-    elseif(NOT "${TEST_GROUP}" STREQUAL "all" AND "${TEST_CASE}" STREQUAL "all")
-        set(TEST_REGEXP "^${TEST_GROUP}\\..+$")
-    elseif("${TEST_GROUP}" STREQUAL "all" AND NOT "${TEST_CASE}" STREQUAL "all")
-        set(TEST_REGEXP "^.+\\.${TEST_CASE}$")
-    elseif(NOT "${TEST_GROUP}" STREQUAL "all" AND NOT "${TEST_CASE}" STREQUAL "all")
-        set(TEST_REGEXP "^${TEST_GROUP}\\.${TEST_CASE}$")
-    endif()
-
-    message(STATUS "TEST_GROUP: '${TEST_GROUP}'")
-    message(STATUS "TEST_CASE: '${TEST_CASE}'")
-    message(STATUS "TEST_REGEXP: '${TEST_REGEXP}'")
 endif()
 
 message(STATUS "TARGET_CMAKE_INSTALL_DEPENDS_ON:")
@@ -445,11 +428,11 @@ add_library("${PROJECT_NAME}"
 
     "src/main/cpp/exqudens/log/api/Logging.cpp"
 )
-set(INLINE_MACRO_NAME "${BASE_NAME}_INLINE")
+#[[set(INLINE_MACRO_NAME "${BASE_NAME}_INLINE")
 set(INLINE_MACRO "#  define ${INLINE_MACRO_NAME}")
-#[[if("${INTERFACE_ONLY}")
+if("${INTERFACE_ONLY}")
     set(INLINE_MACRO "#  define ${INLINE_MACRO_NAME} inline")
-endif()]]
+endif()
 string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_EXPORTS" EXPORTS_MACRO_NAME)
 string(JOIN "\n" EXPORT_HEADER_CUSTOM_CONTENT
     ""
@@ -475,7 +458,7 @@ string(JOIN "\n" EXPORT_HEADER_CUSTOM_CONTENT
     "${INLINE_MACRO}"
     "#endif /* ${INLINE_MACRO_NAME} */"
     ""
-)
+)]]
 generate_export_header("${PROJECT_NAME}"
     BASE_NAME "${BASE_NAME}"
     EXPORT_FILE_NAME "generated/src/main/cpp/${BASE_DIR}/export.hpp"
@@ -595,11 +578,6 @@ if(NOT "${SKIP_TEST}")
         "GTest::gmock_main"
         "GTest::gtest_main"
     )
-    #[[if(NOT "${BUILD_SHARED_LIBS}")
-        target_compile_definitions("test-lib" PUBLIC
-            "${BASE_NAME}_STATIC_DEFINE"
-        )
-    endif()]]
     set_target_properties("test-lib" PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY                "${PROJECT_BINARY_DIR}/test/bin"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${PROJECT_BINARY_DIR}/test/bin"
@@ -682,8 +660,17 @@ if(NOT "${SKIP_TEST}")
     )
 
     add_custom_command(
-        OUTPUT "${PROJECT_BINARY_DIR}/junit.xml"
-        COMMAND "${CMAKE_CTEST_COMMAND}" "--build-nocmake" "--output-junit" "${PROJECT_BINARY_DIR}/junit.xml" "--preset" "${PRESET_NAME}" "-R" "${TEST_REGEXP}"
+        OUTPUT "${PROJECT_BINARY_DIR}/unit-junit.xml"
+        COMMAND "${CMAKE_CTEST_COMMAND}" "--build-nocmake" "--output-junit" "${PROJECT_BINARY_DIR}/unit-junit.xml" "--preset" "${PRESET_NAME}" "-R" "^.*UnitTests\\..+$"
+        DEPENDS "test-app"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        USES_TERMINAL
+        VERBATIM
+    )
+
+    add_custom_command(
+        OUTPUT "${PROJECT_BINARY_DIR}/integration-junit.xml"
+        COMMAND "${CMAKE_CTEST_COMMAND}" "--build-nocmake" "--output-junit" "${PROJECT_BINARY_DIR}/integration-junit.xml" "--preset" "${PRESET_NAME}" "-R" "^.*IntegrationTests\\..+$"
         DEPENDS "test-app"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         USES_TERMINAL
@@ -691,7 +678,8 @@ if(NOT "${SKIP_TEST}")
     )
 
     add_custom_target("cmake-test"
-        DEPENDS "${PROJECT_BINARY_DIR}/junit.xml"
+        DEPENDS "${PROJECT_BINARY_DIR}/unit-junit.xml"
+                "${PROJECT_BINARY_DIR}/integration-junit.xml"
     )
 endif()
 
@@ -748,7 +736,7 @@ add_custom_target("vscode"
             LAUNCH_TEMPLATE_FILE "${PROJECT_SOURCE_DIR}/src/test/resources/vscode/launch.json"
             LAUNCH_FILE "${PROJECT_SOURCE_DIR}/.vscode/launch.json"
             LAUNCH_TESTS_FILE "${PROJECT_BINARY_DIR}/test/bin/tests.json"
-            LAUNCH_TESTS "*.*"
+            LAUNCH_TESTS "*UnitTests.*" "*IntegrationTests.*"
             LAUNCH_DEFAULT_TEST "LogIntegrationTests.test_1"
     DEPENDS "${PROJECT_NAME}" "test-app"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"

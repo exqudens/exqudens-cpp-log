@@ -67,7 +67,7 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": {
                     "type": "FILEPATH",
-                    "value": "../msvc-x64-x64-toolchain.cmake"
+                    "value": "build/msvc-x64-x64-toolchain.cmake"
                 }
             }
         },
@@ -77,7 +77,7 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": {
                     "type": "FILEPATH",
-                    "value": "../gcc-toolchain.cmake"
+                    "value": "build/gcc-toolchain.cmake"
                 },
                 "CONAN_COMPILER_LIBCXX": {
                     "type": "STRING",
@@ -91,7 +91,7 @@
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": {
                     "type": "FILEPATH",
-                    "value": "../clang-toolchain.cmake"
+                    "value": "build/clang-toolchain.cmake"
                 }
             }
         },
@@ -103,18 +103,6 @@
                 "INTERFACE_ONLY": {
                     "type": "BOOL",
                     "value": true
-                },
-                "BUILD_SHARED_LIBS": {
-                    "type": "BOOL",
-                    "value": false
-                },
-                "CMAKE_BUILD_TYPE": {
-                    "type": "STRING",
-                    "value": "Debug"
-                },
-                "CMAKE_MSVC_RUNTIME_LIBRARY": {
-                    "type": "STRING",
-                    "value": "MultiThreadedDebug"
                 }
             }
         },
@@ -204,7 +192,7 @@
         {
             "name": "windows.ninja.msvc-x64-x64.interface",
             "hidden": true,
-            "inherits": ["default", "windows", "ninja", "msvc-x64-x64", "interface"],
+            "inherits": ["default", "windows", "ninja", "msvc-x64-x64", "interface", "debug", "static", "mtd"],
             "binaryDir": "${sourceDir}/build/0"
         },
         {
@@ -231,7 +219,7 @@
         {
             "name": "linux.ninja.gcc.interface",
             "hidden": true,
-            "inherits": ["default", "linux", "ninja", "gcc", "interface"],
+            "inherits": ["default", "linux", "ninja", "gcc", "interface", "debug", "static", "mtd"],
             "binaryDir": "${sourceDir}/build/5"
         },
         {
@@ -258,7 +246,7 @@
         {
             "name": "darwin.ninja.clang.interface",
             "hidden": true,
-            "inherits": ["default", "darwin", "ninja", "clang", "interface"],
+            "inherits": ["default", "darwin", "ninja", "clang", "interface", "debug", "static", "mtd"],
             "binaryDir": "${sourceDir}/build/10"
         },
         {

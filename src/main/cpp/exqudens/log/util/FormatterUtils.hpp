@@ -14,7 +14,7 @@
 
 namespace exqudens::log::util {
 
-    class EXQUDENS_LOG_EXPORT FormatterUtils {
+    class EXQUDENS_LOG_API_EXPORT FormatterUtils {
 
         public:
 

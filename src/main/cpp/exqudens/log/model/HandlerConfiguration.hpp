@@ -6,7 +6,7 @@
 
 namespace exqudens::log::model {
 
-    struct EXQUDENS_LOG_EXPORT HandlerConfiguration {
+    struct EXQUDENS_LOG_API_EXPORT HandlerConfiguration {
 
         std::string id;
         std::string type;

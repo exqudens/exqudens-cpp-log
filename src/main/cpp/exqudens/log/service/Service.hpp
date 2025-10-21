@@ -10,7 +10,7 @@
 
 namespace exqudens::log::service {
 
-    class EXQUDENS_LOG_EXPORT Service {
+    class EXQUDENS_LOG_API_EXPORT Service {
 
         private:
 

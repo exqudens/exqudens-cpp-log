@@ -8,7 +8,7 @@
 
 namespace exqudens::log::model {
 
-    struct EXQUDENS_LOG_EXPORT Constant {
+    struct EXQUDENS_LOG_API_EXPORT Constant {
 
         inline static const std::string FORMATTER_PARAMETER_ID_TIMESTAMP = "timestamp";
         inline static const std::string FORMATTER_PARAMETER_ID_LEVEL = "level";

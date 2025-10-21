@@ -8,7 +8,7 @@
 
 namespace exqudens::log::model {
 
-    struct EXQUDENS_LOG_EXPORT Data {
+    struct EXQUDENS_LOG_API_EXPORT Data {
 
         std::optional<std::chrono::system_clock::time_point> timePoint = {};
         std::optional<std::thread::id> threadId = {};

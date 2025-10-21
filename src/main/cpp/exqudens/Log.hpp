@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 
 #include "exqudens/log/export.hpp"
@@ -35,7 +36,7 @@
 
 namespace exqudens {
 
-    class EXQUDENS_LOG_EXPORT Log {
+    class EXQUDENS_LOG_API_EXPORT Log {
 
         public:
 
@@ -57,7 +58,12 @@ namespace exqudens {
 
             static std::vector<std::pair<unsigned short, std::string>> loggerLevelIdNameVector() noexcept;
 
-            static std::string configure(const std::string& file = "log/log.txt", size_t fileSize = 1073741824, const std::map<std::string, unsigned short>& loggerIdLevelMap = {});
+            static std::string configure(
+                const std::string& file = "log/log.txt",
+                size_t fileSize = 1073741824,
+                const std::set<std::string>& loggerIdSet = {},
+                const std::map<std::string, unsigned short>& loggerIdLevelMap = {}
+            );
 
             static bool isConfigured();
 
