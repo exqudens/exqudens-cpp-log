@@ -4,7 +4,6 @@
 
 #include "exqudens/log/service/LoggerService.hpp"
 #include "exqudens/log/model/Constant.hpp"
-#include "exqudens/log/service/ServiceFactory.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
@@ -19,11 +18,11 @@ namespace exqudens::log::service {
                 std::shared_ptr<exqudens::log::service::IHandlerService> handlerService = nullptr;
 
                 if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE) {
-                    handlerService = ServiceFactory::getInstance().createConsoleHandler(handlerConfig);
+                    handlerService = config.createConsoleHandlerFunction(handlerConfig);
                 } else if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_FILE) {
-                    handlerService = ServiceFactory::getInstance().createFileHandler(handlerConfig);
+                    handlerService = config.createFileHandlerFunction(handlerConfig);
                 } else {
-                    handlerService = ServiceFactory::getInstance().createHandler(handlerConfig);
+                    handlerService = config.createHandlerFunction(handlerConfig);
                 }
 
                 if (handlerService != nullptr) {

@@ -6,6 +6,7 @@
 
 #include "exqudens/log/export.hpp"
 #include "exqudens/log/api/Logging.hpp"
+#include "exqudens/log/model/Service.hpp"
 #include "exqudens/log/service/Service.hpp"
 #include "exqudens/log/util/Utils.hpp"
 
@@ -40,10 +41,10 @@ namespace exqudens::log::api {
 
     std::string Logging::configure(const std::any& input) {
         try {
-            if (input.type() != typeid(exqudens::log::model::Configuration)) {
-                throw std::runtime_error(CALL_INFO + ": unsupported input type: '" + input.type().name() + "' supported type: '" + typeid(exqudens::log::model::Configuration).name() + "'");
+            if (input.type() != typeid(exqudens::log::model::Service)) {
+                throw std::runtime_error(CALL_INFO + ": unsupported input type: '" + input.type().name() + "' supported type: '" + typeid(exqudens::log::model::Service).name() + "'");
             }
-            exqudens::log::model::Configuration config = std::any_cast<exqudens::log::model::Configuration>(input);
+            exqudens::log::model::Service config = std::any_cast<exqudens::log::model::Service>(input);
             std::shared_ptr<exqudens::log::service::Service> service = std::make_shared<exqudens::log::service::Service>();
             service->configure(config);
             Logging::data = service;

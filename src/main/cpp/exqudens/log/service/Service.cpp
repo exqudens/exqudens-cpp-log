@@ -13,9 +13,9 @@ namespace exqudens::log::service {
 
     Service::Service() = default;
 
-    void Service::configure(const exqudens::log::model::Configuration& configuration) {
+    void Service::configure(const exqudens::log::model::Service& config) {
         try {
-            std::map<std::string, exqudens::log::model::Logger> loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(configuration);
+            std::map<std::string, exqudens::log::model::Logger> loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(config);
             for (const std::pair<std::string, exqudens::log::model::Logger>& entry : loggerMap) {
                 LoggerService logger;
                 logger.configure(entry.second);

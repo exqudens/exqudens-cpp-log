@@ -11,7 +11,6 @@
 
 #include "TestUtils.hpp"
 #include "mock/MockHandlerService.hpp"
-#include "exqudens/log/service/ServiceFactory.hpp"
 #include "exqudens/Log.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
@@ -42,16 +41,20 @@ namespace exqudens {
             EXPECT_CALL(*mock, writeString).WillRepeatedly([&messages](const std::string& value) { messages.emplace_back(value); });
             EXPECT_CALL(*mock, write).Times(testing::AtLeast(1));
 
-            exqudens::log::service::ServiceFactory::init(
+            /* exqudens::log::service::ServiceFactory::init(
                 [&mock](const exqudens::log::model::Handler& config) { mock->configure(config); return mock; },
                 [&mock](const exqudens::log::model::Handler& config) { mock->configure(config); return mock; },
                 {}
-            );
+            ); */
 
             std::string loggingConfig = exqudens::Log::configure(
                 "log/log.txt",
                 1073741824,
-                {"test.logger.1"}
+                {"test.logger.1"},
+                {},
+                [&mock](const exqudens::log::model::Handler& config) { mock->configure(config); return mock; },
+                [&mock](const exqudens::log::model::Handler& config) { mock->configure(config); return mock; },
+                {}
             );
             std::cout << LOGGER_ID << " loggingConfig: " << '"' << loggingConfig << '"' << std::endl;
 

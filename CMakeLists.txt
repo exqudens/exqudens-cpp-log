@@ -391,6 +391,7 @@ add_library("${PROJECT_NAME}"
     "src/main/cpp/exqudens/log/model/Formatter.hpp"
     "src/main/cpp/exqudens/log/model/Handler.hpp"
     "src/main/cpp/exqudens/log/model/Logger.hpp"
+    "src/main/cpp/exqudens/log/model/Service.hpp"
     "src/main/cpp/exqudens/log/model/Data.hpp"
 
     "src/main/cpp/exqudens/log/service/FormatterService.hpp"
@@ -410,9 +411,6 @@ add_library("${PROJECT_NAME}"
 
     "src/main/cpp/exqudens/log/service/Service.hpp"
     "src/main/cpp/exqudens/log/service/Service.cpp"
-
-    "src/main/cpp/exqudens/log/service/ServiceFactory.hpp"
-    "src/main/cpp/exqudens/log/service/ServiceFactory.cpp"
 
     "src/main/cpp/exqudens/log/util/Utils.hpp"
     "src/main/cpp/exqudens/log/util/Utils.cpp"
@@ -660,17 +658,8 @@ if(NOT "${SKIP_TEST}")
     )
 
     add_custom_command(
-        OUTPUT "${PROJECT_BINARY_DIR}/unit-junit.xml"
-        COMMAND "${CMAKE_CTEST_COMMAND}" "--build-nocmake" "--output-junit" "${PROJECT_BINARY_DIR}/unit-junit.xml" "--preset" "${PRESET_NAME}" "-R" "^.*UnitTests\\..+$"
-        DEPENDS "test-app"
-        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
-        USES_TERMINAL
-        VERBATIM
-    )
-
-    add_custom_command(
-        OUTPUT "${PROJECT_BINARY_DIR}/integration-junit.xml"
-        COMMAND "${CMAKE_CTEST_COMMAND}" "--build-nocmake" "--output-junit" "${PROJECT_BINARY_DIR}/integration-junit.xml" "--preset" "${PRESET_NAME}" "-R" "^.*IntegrationTests\\..+$"
+        OUTPUT "${PROJECT_BINARY_DIR}/junit.xml"
+        COMMAND "${CMAKE_CTEST_COMMAND}" "--build-nocmake" "--output-junit" "${PROJECT_BINARY_DIR}/junit.xml" "--preset" "${PRESET_NAME}" "-R" "^.+\\..+$"
         DEPENDS "test-app"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         USES_TERMINAL
@@ -678,8 +667,7 @@ if(NOT "${SKIP_TEST}")
     )
 
     add_custom_target("cmake-test"
-        DEPENDS "${PROJECT_BINARY_DIR}/unit-junit.xml"
-                "${PROJECT_BINARY_DIR}/integration-junit.xml"
+        DEPENDS "${PROJECT_BINARY_DIR}/junit.xml"
     )
 endif()
 
@@ -736,8 +724,29 @@ add_custom_target("vscode"
             LAUNCH_TEMPLATE_FILE "${PROJECT_SOURCE_DIR}/src/test/resources/vscode/launch.json"
             LAUNCH_FILE "${PROJECT_SOURCE_DIR}/.vscode/launch.json"
             LAUNCH_TESTS_FILE "${PROJECT_BINARY_DIR}/test/bin/tests.json"
-            LAUNCH_TESTS "*UnitTests.*" "*IntegrationTests.*"
-            LAUNCH_DEFAULT_TEST "LogIntegrationTests.test_1"
+            LAUNCH_TESTS "*.*" "*UnitTests.*" "*IntegrationTests.*"
+            LAUNCH_DEFAULT_TEST "*.*"
+    DEPENDS "${PROJECT_NAME}" "test-app"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    USES_TERMINAL
+    VERBATIM
+)
+
+add_custom_target("clion"
+    COMMAND "${CMAKE_COMMAND}" "-P" "cmake/util.cmake" "--" "clion"
+            SOURCE_DIR "${PROJECT_SOURCE_DIR}"
+            BINARY_DIR "${PROJECT_BINARY_DIR}"
+
+            GTEST_GENERATE "1"
+            GTEST_FILES_OVERWRITE "1"
+            GTEST_TESTS_FILE "${PROJECT_BINARY_DIR}/test/bin/tests.json"
+            GTEST_TEMPLATE_FILE "${PROJECT_SOURCE_DIR}/src/test/resources/clion/gtest/filter-run.xml"
+            GTEST_CONFIG_NAME "${PRESET_NAME}"
+            GTEST_PROJECT_NAME "${PROJECT_NAME}"
+            GTEST_TARGET_NAME "test-app"
+            GTEST_OUTPUT_DIR "${PROJECT_SOURCE_DIR}/.clion/gtest"
+            GTEST_TESTS "*.*" "*UnitTests.*" "*IntegrationTests.*"
+            GTEST_PROGRAM_PARAMS "--project-binary-dir=${PROJECT_BINARY_DIR}"
     DEPENDS "${PROJECT_NAME}" "test-app"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     USES_TERMINAL

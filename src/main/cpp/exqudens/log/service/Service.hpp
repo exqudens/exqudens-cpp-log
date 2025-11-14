@@ -5,7 +5,7 @@
 #include <map>
 
 #include "exqudens/log/export.hpp"
-#include "exqudens/log/model/Configuration.hpp"
+#include "exqudens/log/model/Service.hpp"
 #include "exqudens/log/service/LoggerService.hpp"
 
 namespace exqudens::log::service {
@@ -21,7 +21,7 @@ namespace exqudens::log::service {
 
             Service();
 
-            void configure(const exqudens::log::model::Configuration& configuration);
+            void configure(const exqudens::log::model::Service& config);
 
             bool isConfigured();
 

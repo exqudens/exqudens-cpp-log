@@ -9,44 +9,47 @@
 
 namespace exqudens::log::util {
 
-    std::map<std::string, exqudens::log::model::Logger> ModelUtils::toLoggerMap(const exqudens::log::model::Configuration& configuration) {
+    std::map<std::string, exqudens::log::model::Logger> ModelUtils::toLoggerMap(const exqudens::log::model::Service& config) {
         try {
             std::map<std::string, exqudens::log::model::Logger> result = {};
 
-            if (!configuration.loggers.contains(exqudens::log::model::Constant::LOGGER_ID_ROOT)) {
+            if (!config.loggers.contains(exqudens::log::model::Constant::LOGGER_ID_ROOT)) {
                 throw std::runtime_error(CALL_INFO + ": configuration missing logger id: '" + exqudens::log::model::Constant::LOGGER_ID_ROOT + "'");
             }
 
-            for (const auto& loggerEntry : configuration.loggers) {
+            for (const auto& loggerEntry : config.loggers) {
                 exqudens::log::model::Logger logger = {};
                 logger.id = loggerEntry.second.id;
                 logger.level = loggerEntry.second.level;
                 logger.handlers = {};
+                logger.createConsoleHandlerFunction = config.createConsoleHandlerFunction;
+                logger.createFileHandlerFunction = config.createFileHandlerFunction;
+                logger.createHandlerFunction = config.createHandlerFunction;
 
                 for (const std::string& handlerId : loggerEntry.second.handlers) {
                     exqudens::log::model::Handler handler = {};
 
-                    if (!configuration.handlers.contains(handlerId)) {
+                    if (!config.handlers.contains(handlerId)) {
                         throw std::runtime_error(CALL_INFO + ": configuration missing handler id: '" + handlerId + "'");
                     }
 
                     handler.id = handlerId;
-                    handler.type = configuration.handlers.at(handler.id).type;
-                    handler.stream = configuration.handlers.at(handler.id).stream;
-                    handler.file = configuration.handlers.at(handler.id).file;
-                    handler.size = configuration.handlers.at(handler.id).size;
+                    handler.type = config.handlers.at(handler.id).type;
+                    handler.stream = config.handlers.at(handler.id).stream;
+                    handler.file = config.handlers.at(handler.id).file;
+                    handler.size = config.handlers.at(handler.id).size;
 
-                    std::string formatterId = configuration.handlers.at(handler.id).formatter;
+                    std::string formatterId = config.handlers.at(handler.id).formatter;
 
-                    if (!configuration.formatters.contains(formatterId)) {
+                    if (!config.formatters.contains(formatterId)) {
                         throw std::runtime_error(CALL_INFO + ": configuration missing formatter id: '" + handler.id + "'");
                     }
 
                     exqudens::log::model::Formatter formatter = {};
                     formatter.id = formatterId;
-                    formatter.format = configuration.formatters.at(formatter.id).format;
+                    formatter.format = config.formatters.at(formatter.id).format;
                     formatter.parameters = {};
-                    for (const auto& formatterParameterEntry : configuration.formatters.at(formatter.id).parameters) {
+                    for (const auto& formatterParameterEntry : config.formatters.at(formatter.id).parameters) {
                         exqudens::log::model::Formatter::Parameter parameter = {};
                         parameter.id = formatterParameterEntry.second.id;
                         parameter.format = formatterParameterEntry.second.format;

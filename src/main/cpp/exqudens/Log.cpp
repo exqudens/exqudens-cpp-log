@@ -3,6 +3,9 @@
 
 #include "exqudens/Log.hpp"
 #include "exqudens/log/model/Constant.hpp"
+#include "exqudens/log/model/Service.hpp"
+#include "exqudens/log/service/ConsoleHandlerService.hpp"
+#include "exqudens/log/service/FileHandlerService.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
@@ -102,7 +105,11 @@ namespace exqudens {
         }
     }
 
-    std::map<std::string, exqudens::log::model::HandlerConfiguration> Log::defaultHandlerConfigurations(const std::string& file, size_t fileSize, const std::string& formatter) {
+    std::map<std::string, exqudens::log::model::HandlerConfiguration> Log::defaultHandlerConfigurations(
+        const std::string& file,
+        size_t fileSize,
+        const std::string& formatter
+    ) {
         try {
             std::map<std::string, exqudens::log::model::HandlerConfiguration> result = {};
 
@@ -129,7 +136,11 @@ namespace exqudens {
         }
     }
 
-    std::map<std::string, exqudens::log::model::LoggerConfiguration> Log::defaultLoggerConfigurations(const std::vector<std::string>& handlers, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
+    std::map<std::string, exqudens::log::model::LoggerConfiguration> Log::defaultLoggerConfigurations(
+        const std::vector<std::string>& handlers,
+        const std::map<std::string,
+        unsigned short>& loggerIdLevelMap
+    ) {
         try {
             std::map<std::string, exqudens::log::model::LoggerConfiguration> result = {};
 
@@ -165,7 +176,11 @@ namespace exqudens {
         }
     }
 
-    exqudens::log::model::Configuration Log::defaultConfiguration(const std::string& file, size_t fileSize, const std::map<std::string, unsigned short>& loggerIdLevelMap) {
+    exqudens::log::model::Configuration Log::defaultConfiguration(
+        const std::string& file,
+        size_t fileSize,
+        const std::map<std::string, unsigned short>& loggerIdLevelMap
+    ) {
         try {
             exqudens::log::model::Configuration output = {};
 
@@ -175,6 +190,29 @@ namespace exqudens {
             output.loggers = defaultLoggerConfigurations({exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE, exqudens::log::model::Constant::HANDLER_TYPE_FILE}, loggerIdLevelMap);
 
             return output;
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(CALL_INFO));
+        }
+    }
+
+    exqudens::log::model::Service Log::defaultServiceModel(
+        const exqudens::log::model::Configuration& config,
+        const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createConsoleHandlerFunction,
+        const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createFileHandlerFunction,
+        const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createHandlerFunction
+    ) {
+        try {
+            exqudens::log::model::Service result = {};
+
+            result.id = config.id;
+            result.formatters = config.formatters;
+            result.handlers = config.handlers;
+            result.loggers = config.loggers;
+            result.createConsoleHandlerFunction = createConsoleHandlerFunction;
+            result.createFileHandlerFunction = createFileHandlerFunction;
+            result.createHandlerFunction = createHandlerFunction;
+
+            return result;
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }
@@ -195,15 +233,54 @@ namespace exqudens {
         const std::string &file,
         size_t fileSize,
         const std::set<std::string>& loggerIdSet,
-        const std::map<std::string, unsigned short>& loggerIdLevelMap
+        const std::map<std::string, unsigned short>& loggerIdLevelMap,
+        const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createConsoleHandlerFunction,
+        const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createFileHandlerFunction,
+        const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createHandlerFunction
     ) {
         try {
             std::map<std::string, unsigned short> internalLoggerIdLevelMap = loggerIdLevelMap;
+
             for (const std::string& loggerId : loggerIdSet) {
                 internalLoggerIdLevelMap.try_emplace(loggerId, 0);
             }
+
             exqudens::log::model::Configuration configuration = defaultConfiguration(file, fileSize, internalLoggerIdLevelMap);
-            return exqudens::log::api::Logging::configure(configuration);
+
+            std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)> internalCreateConsoleHandlerFunction = {};
+            std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)> internalCreateFileHandlerFunction = {};
+            std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)> internalCreateHandlerFunction = {};
+
+            if (createConsoleHandlerFunction) {
+                internalCreateConsoleHandlerFunction = createConsoleHandlerFunction;
+            } else {
+                internalCreateConsoleHandlerFunction = [](const exqudens::log::model::Handler& arg0) {
+                    std::shared_ptr<exqudens::log::service::IHandlerService> result = nullptr;
+                    result = std::make_unique<exqudens::log::service::ConsoleHandlerService>();
+                    result->configure(arg0);
+                    return result;
+                };
+            }
+
+            if (createFileHandlerFunction) {
+                internalCreateFileHandlerFunction = createFileHandlerFunction;
+            } else {
+                internalCreateFileHandlerFunction = [](const exqudens::log::model::Handler& arg0) {
+                    std::shared_ptr<exqudens::log::service::IHandlerService> result = nullptr;
+                    result = std::make_unique<exqudens::log::service::FileHandlerService>();
+                    result->configure(arg0);
+                    return result;
+                };
+            }
+
+            exqudens::log::model::Service service = defaultServiceModel(
+                configuration,
+                internalCreateConsoleHandlerFunction,
+                internalCreateFileHandlerFunction,
+                createHandlerFunction
+            );
+
+            return exqudens::log::api::Logging::configure(service);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }

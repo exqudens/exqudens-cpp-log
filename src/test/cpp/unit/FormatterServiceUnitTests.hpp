@@ -39,6 +39,7 @@ namespace exqudens {
             std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
 
             exqudens::log::model::Configuration configuration = {};
+            exqudens::log::model::Service serviceModel = {};
             std::map<std::string, exqudens::log::model::Logger> loggerMap = {};
             exqudens::log::model::Formatter config = {};
             exqudens::log::service::FormatterService service = {};
@@ -47,7 +48,8 @@ namespace exqudens {
             std::string actual = {};
 
             configuration = Log::defaultConfiguration("log/log.txt", 1073741824, {});
-            loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(configuration);
+            serviceModel = Log::defaultServiceModel(configuration, {}, {}, {});
+            loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(serviceModel);
             config = loggerMap.at(exqudens::log::model::Constant::LOGGER_ID_ROOT).handlers.at(0).formatter;
             //config.parameters[exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_TIMESTAMP].size = 10;
             //config.parameters[exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_TIMESTAMP].reverse = true;
