@@ -85,18 +85,6 @@ project("${NAME}" VERSION "${VERSION}" LANGUAGES "NONE")
 message(STATUS "PROJECT_NAME: '${PROJECT_NAME}'")
 message(STATUS "PROJECT_VERSION: '${PROJECT_VERSION}'")
 
-string(REPLACE "_" "-" BASE_DIR "${PROJECT_NAME}")
-string(REPLACE "-cpp-" "-" BASE_DIR "${BASE_DIR}")
-string(REPLACE "-" "/" BASE_DIR "${BASE_DIR}")
-
-message(STATUS "BASE_DIR: '${BASE_DIR}'")
-
-#[[string(REPLACE "/" "_" BASE_NAME "${BASE_DIR}")
-string(TOUPPER "${BASE_NAME}" BASE_NAME)]]
-set(BASE_NAME "EXQUDENS_LOG_API")
-
-message(STATUS "BASE_NAME: '${BASE_NAME}'")
-
 if("$ENV{CLION_IDE}")
     cmake_path(CONVERT "$ENV{PATH}" TO_CMAKE_PATH_LIST TMP_CMAKE_ENV_PATH NORMALIZE)
     list(REMOVE_AT TMP_CMAKE_ENV_PATH 0)
@@ -193,7 +181,7 @@ if("${USE_CONAN}")
     set_conan_compiler_runtime(CONAN_COMPILER_RUNTIME "${CMAKE_MSVC_RUNTIME_LIBRARY}")
     set_conan_compiler_runtime_type(CONAN_COMPILER_RUNTIME_TYPE "${CMAKE_MSVC_RUNTIME_LIBRARY}")
 
-    set_python_boolean(CONAN_INTERFACE_ONLY "${INTERFACE_ONLY}")
+    set_python_boolean(CONAN_HEADER_ONLY "${INTERFACE_ONLY}")
     set_python_boolean(CONAN_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
 
     set_conan_settings(CONAN_SETTINGS
@@ -209,6 +197,7 @@ if("${USE_CONAN}")
         "build_type=${CMAKE_BUILD_TYPE}"
     )
     set_conan_options(CONAN_OPTIONS
+        "${PROJECT_NAME}/*:header_only=${CONAN_HEADER_ONLY}"
         "&:shared=${CONAN_BUILD_SHARED_LIBS}"
         "*:shared=${CONAN_BUILD_SHARED_LIBS}"
     )
@@ -374,104 +363,120 @@ foreach(cmakePackageName IN LISTS "${PROJECT_NAME}_CMAKE_FIND_PACKAGE_NAMES")
 endforeach()
 set_not_found_package_names(NOT_FOUND_PACKAGE_NAMES ${NOT_FOUND_PACKAGE_NAMES})
 if(NOT "" STREQUAL "${NOT_FOUND_PACKAGE_NAMES}")
-    foreach(package IN LISTS NOT_FOUND_PACKAGE_NAMES)
+    foreach(package IN LISTS "NOT_FOUND_PACKAGE_NAMES")
         message(SEND_ERROR "${package}_FOUND: '${${package}_FOUND}' ${package}_NOT_FOUND_MESSAGE: '${${package}_NOT_FOUND_MESSAGE}'")
     endforeach()
     message(FATAL_ERROR "Some package not found!")
 endif()
 
+set(BASE_DIR "exqudens/log")
+
 configure_file("${PROJECT_SOURCE_DIR}/versions.hpp.in" "${PROJECT_BINARY_DIR}/generated/src/main/cpp/${BASE_DIR}/versions.hpp" @ONLY NEWLINE_STYLE UNIX)
 
-add_library("${PROJECT_NAME}"
-    "src/main/cpp/exqudens/log/model/Constant.hpp"
-    "src/main/cpp/exqudens/log/model/FormatterConfiguration.hpp"
-    "src/main/cpp/exqudens/log/model/HandlerConfiguration.hpp"
-    "src/main/cpp/exqudens/log/model/LoggerConfiguration.hpp"
-    "src/main/cpp/exqudens/log/model/Configuration.hpp"
-    "src/main/cpp/exqudens/log/model/Formatter.hpp"
-    "src/main/cpp/exqudens/log/model/Handler.hpp"
-    "src/main/cpp/exqudens/log/model/Logger.hpp"
-    "src/main/cpp/exqudens/log/model/Service.hpp"
-    "src/main/cpp/exqudens/log/model/Data.hpp"
+set(LIB_SOURCES
+    "src/main/cpp/${BASE_DIR}/model/Constant.hpp"
+    "src/main/cpp/${BASE_DIR}/model/FormatterConfiguration.hpp"
+    "src/main/cpp/${BASE_DIR}/model/HandlerConfiguration.hpp"
+    "src/main/cpp/${BASE_DIR}/model/LoggerConfiguration.hpp"
+    "src/main/cpp/${BASE_DIR}/model/Configuration.hpp"
+    "src/main/cpp/${BASE_DIR}/model/Formatter.hpp"
+    "src/main/cpp/${BASE_DIR}/model/Handler.hpp"
+    "src/main/cpp/${BASE_DIR}/model/Logger.hpp"
+    "src/main/cpp/${BASE_DIR}/model/Service.hpp"
+    "src/main/cpp/${BASE_DIR}/model/Data.hpp"
 
-    "src/main/cpp/exqudens/log/service/FormatterService.hpp"
-    "src/main/cpp/exqudens/log/service/FormatterService.cpp"
+    "src/main/cpp/${BASE_DIR}/service/FormatterService.hpp"
+    "src/main/cpp/${BASE_DIR}/service/IHandlerService.hpp"
+    "src/main/cpp/${BASE_DIR}/service/HandlerService.hpp"
+    "src/main/cpp/${BASE_DIR}/service/ConsoleHandlerService.hpp"
+    "src/main/cpp/${BASE_DIR}/service/FileHandlerService.hpp"
+    "src/main/cpp/${BASE_DIR}/service/LoggerService.hpp"
+    "src/main/cpp/${BASE_DIR}/service/Service.hpp"
 
-    "src/main/cpp/exqudens/log/service/IHandlerService.hpp"
-    "src/main/cpp/exqudens/log/service/HandlerService.hpp"
-    "src/main/cpp/exqudens/log/service/HandlerService.cpp"
-
-    "src/main/cpp/exqudens/log/service/ConsoleHandlerService.hpp"
-    "src/main/cpp/exqudens/log/service/ConsoleHandlerService.cpp"
-    "src/main/cpp/exqudens/log/service/FileHandlerService.hpp"
-    "src/main/cpp/exqudens/log/service/FileHandlerService.cpp"
-
-    "src/main/cpp/exqudens/log/service/LoggerService.hpp"
-    "src/main/cpp/exqudens/log/service/LoggerService.cpp"
-
-    "src/main/cpp/exqudens/log/service/Service.hpp"
-    "src/main/cpp/exqudens/log/service/Service.cpp"
-
-    "src/main/cpp/exqudens/log/util/Utils.hpp"
-    "src/main/cpp/exqudens/log/util/Utils.cpp"
-    "src/main/cpp/exqudens/log/util/ModelUtils.hpp"
-    "src/main/cpp/exqudens/log/util/ModelUtils.cpp"
-    "src/main/cpp/exqudens/log/util/FormatterUtils.hpp"
-    "src/main/cpp/exqudens/log/util/FormatterUtils.cpp"
-    "src/main/cpp/exqudens/log/util/FileHandlerUtils.hpp"
-    "src/main/cpp/exqudens/log/util/FileHandlerUtils.cpp"
+    "src/main/cpp/${BASE_DIR}/util/Utils.hpp"
+    "src/main/cpp/${BASE_DIR}/util/ModelUtils.hpp"
+    "src/main/cpp/${BASE_DIR}/util/FormatterUtils.hpp"
+    "src/main/cpp/${BASE_DIR}/util/FileHandlerUtils.hpp"
 
     "src/main/cpp/exqudens/Log.hpp"
-    "src/main/cpp/exqudens/Log.cpp"
+)
 
-    "src/main/cpp/exqudens/log/api/Logging.cpp"
-)
-#[[set(INLINE_MACRO_NAME "${BASE_NAME}_INLINE")
-set(INLINE_MACRO "#  define ${INLINE_MACRO_NAME}")
 if("${INTERFACE_ONLY}")
-    set(INLINE_MACRO "#  define ${INLINE_MACRO_NAME} inline")
-endif()
-string(MAKE_C_IDENTIFIER "${PROJECT_NAME}_EXPORTS" EXPORTS_MACRO_NAME)
-string(JOIN "\n" EXPORT_HEADER_CUSTOM_CONTENT
-    ""
-    "#ifdef ${BASE_NAME}_STATIC_DEFINE"
-    "#  define EXQUDENS_LOG_API_EXPORT"
-    "#else"
-    "#  ifdef ${EXPORTS_MACRO_NAME}"
-    "#    ifdef _WIN32"
-    "#      define EXQUDENS_LOG_API_EXPORT __declspec(dllexport)"
-    "#    else"
-    "#      define EXQUDENS_LOG_API_EXPORT __attribute__((visibility(\"default\")))"
-    "#    endif /* _WIN32 */"
-    "#  else"
-    "#    ifdef _WIN32"
-    "#      define EXQUDENS_LOG_API_EXPORT __declspec(dllimport)"
-    "#    else"
-    "#      define EXQUDENS_LOG_API_EXPORT __attribute__((visibility(\"default\")))"
-    "#    endif /* _WIN32 */"
-    "#  endif /* ${EXPORTS_MACRO_NAME} */"
-    "#endif /* ${BASE_NAME}_STATIC_DEFINE */"
-    ""
-    "#ifndef ${INLINE_MACRO_NAME}"
-    "${INLINE_MACRO}"
-    "#endif /* ${INLINE_MACRO_NAME} */"
-    ""
-)]]
-generate_export_header("${PROJECT_NAME}"
-    BASE_NAME "${BASE_NAME}"
-    EXPORT_FILE_NAME "generated/src/main/cpp/${BASE_DIR}/export.hpp"
-    CUSTOM_CONTENT_FROM_VARIABLE "EXPORT_HEADER_CUSTOM_CONTENT"
-)
-if(NOT "${BUILD_SHARED_LIBS}")
-    target_compile_definitions("${PROJECT_NAME}" PUBLIC
-        "${BASE_NAME}_STATIC_DEFINE"
+    add_library("${PROJECT_NAME}" INTERFACE
+        ${LIB_SOURCES}
+    )
+    file(WRITE "${PROJECT_BINARY_DIR}/generated/src/main/cpp/${BASE_DIR}/export.hpp" "#define EXQUDENS_LOG_API_EXPORT\n#define EXQUDENS_LOG_INLINE inline\n")
+    target_include_directories("${PROJECT_NAME}" INTERFACE
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/main/cpp>"
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated/src/main/cpp>"
+        "$<INSTALL_INTERFACE:include>"
+    )
+    target_link_libraries("${PROJECT_NAME}" INTERFACE
+        "exqudens-cpp-log-api::exqudens-cpp-log-api"
+    )
+else()
+    set(LIB_SOURCES_COPY "${LIB_SOURCES}")
+    unset(LIB_SOURCES)
+    foreach(v IN LISTS "LIB_SOURCES_COPY")
+        file(READ "${PROJECT_SOURCE_DIR}/${v}" vContent)
+        string(LENGTH "${vContent}" vContentLength)
+        set(delimiter "// implementation ---")
+        string(LENGTH "${delimiter}" delimiterLength)
+        string(FIND "${vContent}" "// implementation ---" indexOfDelimiter)
+
+        if("${indexOfDelimiter}" STREQUAL "-1")
+            get_filename_component(vDir "${PROJECT_BINARY_DIR}/generated/${v}" DIRECTORY)
+            file(MAKE_DIRECTORY "${vDir}")
+            file(COPY_FILE "${PROJECT_SOURCE_DIR}/${v}" "${PROJECT_BINARY_DIR}/generated/${v}")
+            list(APPEND "LIB_SOURCES" "${PROJECT_BINARY_DIR}/generated/${v}")
+            continue()
+        endif()
+
+        get_filename_component(vDir "${v}" DIRECTORY)
+        file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/generated/${vDir}")
+
+        math(EXPR indexOfDelimiterEnd "${indexOfDelimiter} + ${delimiterLength}")
+        string(SUBSTRING "${vContent}" "0" "${indexOfDelimiter}" vContentHeader)
+        string(STRIP "${vContentHeader}" vContentHeader)
+        string(APPEND "vContentHeader" "\n")
+        file(WRITE "${PROJECT_BINARY_DIR}/generated/${v}" "${vContentHeader}")
+        list(APPEND "LIB_SOURCES" "${PROJECT_BINARY_DIR}/generated/${v}")
+
+        cmake_path(RELATIVE_PATH "v" BASE_DIRECTORY "src/main/cpp" OUTPUT_VARIABLE "vInclude")
+        cmake_path(GET "v" STEM vFileName)
+        string(SUBSTRING "${vContent}" "${indexOfDelimiterEnd}" "-1" vContentSource)
+        string(STRIP "${vContentSource}" vContentSource)
+        string(PREPEND "vContentSource" "#include \"${vInclude}\"\n\n")
+        string(APPEND "vContentSource" "\n")
+        file(WRITE "${PROJECT_BINARY_DIR}/generated/${vDir}/${vFileName}.cpp" "${vContentSource}")
+        list(APPEND "LIB_SOURCES" "${PROJECT_BINARY_DIR}/generated/${vDir}/${vFileName}.cpp")
+    endforeach()
+    if("${BUILD_SHARED_LIBS}")
+        add_library("${PROJECT_NAME}" SHARED
+            ${LIB_SOURCES}
+        )
+    else()
+        add_library("${PROJECT_NAME}" STATIC
+            ${LIB_SOURCES}
+        )
+        target_compile_definitions("${PROJECT_NAME}" PUBLIC
+            "EXQUDENS_LOG_API_STATIC_DEFINE"
+        )
+    endif()
+    set(GENERATE_EXPORT_HEADER_CUSTOM_CONTENT "#define EXQUDENS_LOG_INLINE\n")
+    generate_export_header("${PROJECT_NAME}"
+        BASE_NAME "EXQUDENS_LOG_API"
+        EXPORT_FILE_NAME "generated/src/main/cpp/${BASE_DIR}/export.hpp"
+        CUSTOM_CONTENT_FROM_VARIABLE "GENERATE_EXPORT_HEADER_CUSTOM_CONTENT"
+    )
+    target_include_directories("${PROJECT_NAME}" PUBLIC
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated/src/main/cpp>"
+        "$<INSTALL_INTERFACE:include>"
+    )
+    target_link_libraries("${PROJECT_NAME}" PUBLIC
+        "exqudens-cpp-log-api::exqudens-cpp-log-api"
     )
 endif()
-target_include_directories("${PROJECT_NAME}" PUBLIC
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/main/cpp>"
-    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated/src/main/cpp>"
-    "$<INSTALL_INTERFACE:include>"
-)
 set_target_properties("${PROJECT_NAME}" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY                "${PROJECT_BINARY_DIR}/main/bin"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE        "${PROJECT_BINARY_DIR}/main/bin"
@@ -491,9 +496,6 @@ set_target_properties("${PROJECT_NAME}" PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL     "${PROJECT_BINARY_DIR}/main/lib"
     LIBRARY_OUTPUT_DIRECTORY_DEBUG          "${PROJECT_BINARY_DIR}/main/lib"
 )
-target_link_libraries("${PROJECT_NAME}" PUBLIC
-    "exqudens-cpp-log-api::exqudens-cpp-log-api"
-)
 #set_property(TARGET "${PROJECT_NAME}" PROPERTY "VERSION" "${PROJECT_VERSION}")
 #set_property(TARGET "${PROJECT_NAME}" PROPERTY "SOVERSION" "${PROJECT_VERSION}")
 set_property(TARGET "${PROJECT_NAME}" PROPERTY "INTERFACE_${PROJECT_NAME}_MAJOR_VERSION" "${PROJECT_VERSION}")
@@ -504,7 +506,7 @@ install(
     NAMESPACE "${PROJECT_NAME}::"
     FILE "${PROJECT_NAME}-targets.cmake"
 )
-include(CMakePackageConfigHelpers)
+include("CMakePackageConfigHelpers")
 configure_package_config_file(
     "${PROJECT_SOURCE_DIR}/package-config.cmake.in"
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
@@ -520,14 +522,24 @@ install(
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     DESTINATION "cmake"
 )
-install(
-    DIRECTORY "${PROJECT_BINARY_DIR}/generated/src/main/cpp/"
-              "src/main/cpp/"
-    DESTINATION "include"
-    FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-)
+if("${INTERFACE_ONLY}")
+    install(
+        DIRECTORY "${PROJECT_BINARY_DIR}/generated/src/main/cpp/"
+                "src/main/cpp/"
+        DESTINATION "include"
+        FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "*.hpp"
+    )
+else()
+    install(
+        DIRECTORY "${PROJECT_BINARY_DIR}/generated/src/main/cpp/"
+        DESTINATION "include"
+        FILES_MATCHING
+        PATTERN "*.h"
+        PATTERN "*.hpp"
+    )
+endif()
 install(
     TARGETS "${PROJECT_NAME}"
     EXPORT "${PROJECT_NAME}-targets"
@@ -623,9 +635,9 @@ if(NOT "${SKIP_TEST}")
         if("${CMAKE_SYSTEM_NAME}" STREQUAL "Windows")
             add_custom_command(TARGET "test-app"
                 PRE_BUILD
-                COMMAND "${CMAKE_COMMAND}" -E copy_directory "$<TARGET_PROPERTY:${PROJECT_NAME},RUNTIME_OUTPUT_DIRECTORY>" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
-                COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CONAN_INSTALL_PREFIX}/bin" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
-                COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CONAN_INSTALL_PREFIX}/test/bin" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "$<TARGET_PROPERTY:${PROJECT_NAME},RUNTIME_OUTPUT_DIRECTORY>" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CONAN_INSTALL_PREFIX}/bin" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CONAN_INSTALL_PREFIX}/test/bin" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
                 WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
                 USES_TERMINAL
                 VERBATIM
@@ -633,9 +645,9 @@ if(NOT "${SKIP_TEST}")
         else()
             add_custom_command(TARGET "test-app"
                 PRE_BUILD
-                COMMAND "${CMAKE_COMMAND}" -E copy_directory "$<TARGET_PROPERTY:${PROJECT_NAME},LIBRARY_OUTPUT_DIRECTORY>" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
-                COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CONAN_INSTALL_PREFIX}/lib" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
-                COMMAND "${CMAKE_COMMAND}" -E copy_directory "${CONAN_INSTALL_PREFIX}/test/lib" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "$<TARGET_PROPERTY:${PROJECT_NAME},LIBRARY_OUTPUT_DIRECTORY>" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CONAN_INSTALL_PREFIX}/lib" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
+                COMMAND "${CMAKE_COMMAND}" "-E" "copy_directory" "${CONAN_INSTALL_PREFIX}/test/lib" "$<TARGET_PROPERTY:test-app,RUNTIME_OUTPUT_DIRECTORY>"
                 WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
                 USES_TERMINAL
                 VERBATIM
@@ -673,7 +685,7 @@ endif()
 
 add_custom_command(
     OUTPUT "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}-config.cmake"
-    COMMAND "${CMAKE_COMMAND}" --install "${PROJECT_BINARY_DIR}" --prefix "${CMAKE_INSTALL_PREFIX}"
+    COMMAND "${CMAKE_COMMAND}" "--install" "${PROJECT_BINARY_DIR}" "--prefix" "${CMAKE_INSTALL_PREFIX}"
     DEPENDS ${TARGET_CMAKE_INSTALL_DEPENDS_ON}
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     USES_TERMINAL
@@ -755,7 +767,7 @@ add_custom_target("clion"
 
 set_target_names(ALL_TARGETS "${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "all-targets:")
-foreach(t IN LISTS ALL_TARGETS)
+foreach(t IN LISTS "ALL_TARGETS")
     message(STATUS "${t}")
 endforeach()
 

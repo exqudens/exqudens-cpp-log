@@ -41,3 +41,83 @@ namespace exqudens::log::service {
     };
 
 }
+
+// implementation ---
+
+#include <stdexcept>
+#include <filesystem>
+#include <iostream>
+
+#include "exqudens/log/model/Constant.hpp"
+
+#define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
+
+namespace exqudens::log::service {
+
+    EXQUDENS_LOG_INLINE LoggerService::LoggerService() = default;
+
+    EXQUDENS_LOG_INLINE void LoggerService::configure(const exqudens::log::model::Logger& config) {
+        try {
+            level = config.level;
+            for (const exqudens::log::model::Handler& handlerConfig : config.handlers) {
+                std::shared_ptr<exqudens::log::service::IHandlerService> handlerService = nullptr;
+
+                if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE) {
+                    handlerService = config.createConsoleHandlerFunction(handlerConfig);
+                } else if (handlerConfig.type == exqudens::log::model::Constant::HANDLER_TYPE_FILE) {
+                    handlerService = config.createFileHandlerFunction(handlerConfig);
+                } else {
+                    handlerService = config.createHandlerFunction(handlerConfig);
+                }
+
+                if (handlerService != nullptr) {
+                    if (!handlerService->isConfigured()) {
+                        throw std::runtime_error(CALL_INFO + ": handler: '" + handlerConfig.id + "' is not configured");
+                    }
+                    handlers.emplace_back(handlerService);
+                }
+            }
+            configured = true;
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(CALL_INFO));
+        }
+    }
+
+    EXQUDENS_LOG_INLINE bool LoggerService::isConfigured() {
+        return configured;
+    }
+
+    EXQUDENS_LOG_INLINE void LoggerService::write(
+        const std::string& file,
+        const size_t line,
+        const std::string& function,
+        const std::string& id,
+        const unsigned short level,
+        const std::string& message
+    ) {
+        try {
+            if (level > this->level) {
+                return;
+            }
+            exqudens::log::model::Data data = {};
+            for (const std::shared_ptr<IHandlerService>& handler : handlers) {
+                handler->write(
+                    data,
+                    file,
+                    line,
+                    function,
+                    id,
+                    level,
+                    message
+                );
+            }
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(CALL_INFO));
+        }
+    }
+
+    EXQUDENS_LOG_INLINE LoggerService::~LoggerService() = default;
+
+}
+
+#undef CALL_INFO

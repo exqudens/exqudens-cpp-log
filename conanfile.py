@@ -7,8 +7,8 @@ from conan.tools.files import copy, save, collect_libs
 
 class ConanConfiguration(ConanFile):
     settings = "arch", "os", "compiler", "build_type"
-    options = {"shared": [True, False]}
-    default_options = {"shared": True}
+    options = {"shared": [True, False], 'header_only': [True, False]}
+    default_options = {"shared": True, 'header_only': False}
 
     def set_name(self):
         try:
@@ -94,6 +94,14 @@ class ConanConfiguration(ConanFile):
         try:
             self.cpp_info.set_property("cmake_file_name", self.name)
             self.cpp_info.libs = collect_libs(self)
+        except Exception as e:
+            self.output.error(e)
+            raise e
+
+    def package_id(self):
+        try:
+            if self.info.options.get_safe('header_only'):
+                self.info.clear()
         except Exception as e:
             self.output.error(e)
             raise e
