@@ -1,3 +1,8 @@
+/*!
+* @author Andrii Gorin
+* @copyright MIT License.
+*/
+
 #pragma once
 
 #include "exqudens/log/service/HandlerService.hpp"
