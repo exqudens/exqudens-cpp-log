@@ -8,7 +8,7 @@ from conan.tools.files import copy, save, collect_libs
 class ConanConfiguration(ConanFile):
     settings = "arch", "os", "compiler", "build_type"
     options = {"shared": [True, False], 'header_only': [True, False]}
-    default_options = {"shared": True, 'header_only': False}
+    default_options = {"shared": False, 'header_only': True}
 
     def set_name(self):
         try:
@@ -26,7 +26,7 @@ class ConanConfiguration(ConanFile):
 
     def requirements(self):
         try:
-            self.requires("exqudens-cpp-log-api/1.0.0", transitive_headers=True)
+            self.requires("exqudens-cpp-log-api/0.0.1", transitive_headers=True)
         except Exception as e:
             self.output.error(e)
             raise e

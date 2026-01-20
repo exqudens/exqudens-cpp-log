@@ -14,7 +14,8 @@
 
 ## how-to-export-all-presets
 
-1. `conan remove -c 'exqudens-cpp-log'`
-2. `git clean -xdf`
-3. `cmake --list-presets | cut -d ':' -f2 | xargs -I '{}' echo '{}' | xargs -I '{}' bash -c "cmake --preset {} || exit 255"`
-4. `cmake --list-presets | cut -d ':' -f2 | xargs -I '{}' echo '{}' | xargs -I '{}' bash -c "cmake --build --preset {} --target conan-export || exit 255"`
+1. `conan list 'exqudens-cpp-log/*'`
+2. `conan remove -c 'exqudens-cpp-log'`
+3. `git clean -xdf`
+4. `cmake --list-presets | cut -d ':' -f2 | xargs -I '{}' echo '{}' | xargs -I '{}' bash -c "cmake --preset {} || exit 255"`
+5. `cmake --list-presets | cut -d ':' -f2 | xargs -I '{}' echo '{}' | xargs -I '{}' bash -c "cmake --build --preset {} --target conan-export || exit 255"`
