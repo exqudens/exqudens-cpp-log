@@ -166,7 +166,7 @@ namespace exqudens {
 
             // case-1
             value = std::chrono::system_clock::now();
-            format = exqudens::log::model::Constant::FORMATTER_PARAMETER_TIMESTAMP_FORMAT_DEFAULT;
+            format = "%Y-%m-%d %H:%M:%S";
             seconds = 9;
             secondsDeviderMap = exqudens::log::model::Constant::FORMATTER_PARAMETER_TIMESTAMP_SECONDS_DEVIDER_MAP;
             size = 0;
@@ -179,7 +179,7 @@ namespace exqudens {
 
             // case-2
             value = std::chrono::system_clock::now();
-            format = exqudens::log::model::Constant::FORMATTER_PARAMETER_TIMESTAMP_FORMAT_DEFAULT;
+            format = "%Y-%m-%d %H:%M:%S";
             seconds = 0;
             secondsDeviderMap = {};
             size = 0;
@@ -192,7 +192,7 @@ namespace exqudens {
 
             // case-3
             value = std::chrono::system_clock::now();
-            format = exqudens::log::model::Constant::FORMATTER_PARAMETER_TIMESTAMP_FORMAT_DEFAULT;
+            format = "%Y-%m-%d %H:%M:%S";
             seconds = 1;
             secondsDeviderMap = exqudens::log::model::Constant::FORMATTER_PARAMETER_TIMESTAMP_SECONDS_DEVIDER_MAP;
             size = 0;

@@ -95,6 +95,7 @@ endif()
 enable_language("C")
 enable_language("CXX")
 include("GenerateExportHeader")
+include("CMakePackageConfigHelpers")
 enable_testing()
 include("GoogleTest")
 
@@ -506,7 +507,6 @@ install(
     NAMESPACE "${PROJECT_NAME}::"
     FILE "${PROJECT_NAME}-targets.cmake"
 )
-include("CMakePackageConfigHelpers")
 configure_package_config_file(
     "${PROJECT_SOURCE_DIR}/package-config.cmake.in"
     "${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
@@ -571,16 +571,16 @@ if(NOT "${SKIP_TEST}")
         BASE_NAME "TEST_LIB"
         EXPORT_FILE_NAME "generated/src/test/cpp/test_lib_export.hpp"
     )
-    target_include_directories("test-lib" PUBLIC
-        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated/src/test/cpp>"
-        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/test/cpp>"
-        "$<INSTALL_INTERFACE:include>"
-    )
     if(NOT "${BUILD_SHARED_LIBS}")
         target_compile_definitions("test-lib" PUBLIC
             "TEST_LIB_STATIC_DEFINE"
         )
     endif()
+    target_include_directories("test-lib" PUBLIC
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/generated/src/test/cpp>"
+        "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/test/cpp>"
+        "$<INSTALL_INTERFACE:include>"
+    )
     target_link_libraries("test-lib" PUBLIC
         "${PROJECT_NAME}"
         "GTest::gmock"

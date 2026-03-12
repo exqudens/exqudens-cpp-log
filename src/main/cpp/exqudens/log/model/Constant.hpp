@@ -58,26 +58,6 @@ namespace exqudens::log::model {
             FORMATTER_FORMAT_PLACE_HOLDER_MESSAGE
         };
 
-        //"${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}";
-        inline static const std::string FORMATTER_FORMAT_DEFAULT = FORMATTER_FORMAT_PLACE_HOLDER_TIMESTAMP
-            + " "
-            + FORMATTER_FORMAT_PLACE_HOLDER_LEVEL
-            + " "
-            + FORMATTER_FORMAT_PLACE_HOLDER_LOGGER
-            + " ["
-            + FORMATTER_FORMAT_PLACE_HOLDER_THREAD
-            + "] "
-            + FORMATTER_FORMAT_PLACE_HOLDER_FUNCTION
-            + "("
-            + FORMATTER_FORMAT_PLACE_HOLDER_FILE
-            + ":"
-            + FORMATTER_FORMAT_PLACE_HOLDER_LINE
-            + "): "
-            + FORMATTER_FORMAT_PLACE_HOLDER_MESSAGE
-        ;
-
-        inline static const std::string FORMATTER_PARAMETER_TIMESTAMP_FORMAT_DEFAULT = "%Y-%m-%d %H:%M:%S";
-
         inline static const std::map<unsigned short, long long> FORMATTER_PARAMETER_TIMESTAMP_SECONDS_DEVIDER_MAP = {
             {1, 100000000},
             {2, 10000000},

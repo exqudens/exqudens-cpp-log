@@ -52,6 +52,9 @@ namespace exqudens {
                 1073741824,
                 {"test.logger.1"},
                 {},
+                "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}",
+                "%Y-%m-%d %H:%M:%S",
+                9,
                 [&mock](const exqudens::log::model::Handler& config) { mock->configure(config); return mock; },
                 [&mock](const exqudens::log::model::Handler& config) { mock->configure(config); return mock; },
                 {}

@@ -47,7 +47,14 @@ namespace exqudens {
             std::string expected = {};
             std::string actual = {};
 
-            configuration = Log::defaultConfiguration("log/log.txt", 1073741824, {});
+            configuration = Log::defaultConfiguration(
+                "log/log.txt",
+                1073741824,
+                {},
+                "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}",
+                "%Y-%m-%d %H:%M:%S",
+                9
+            );
             serviceModel = Log::defaultServiceModel(configuration, {}, {}, {});
             loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(serviceModel);
             config = loggerMap.at(exqudens::log::model::Constant::LOGGER_ID_ROOT).handlers.at(0).formatter;
