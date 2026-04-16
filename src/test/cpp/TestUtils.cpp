@@ -1,6 +1,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cctype>
+#include <climits>
 #include <stdexcept>
 #include <filesystem>
 #include <numeric>

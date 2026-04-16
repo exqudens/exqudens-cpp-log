@@ -13,7 +13,7 @@ class ConanConfiguration(ConanFile):
 
     def requirements(self):
         try:
-            self.requires("gtest/1.11.0")
+            self.requires("gtest/1.11.0.0")
         except Exception as e:
             self.output.error(e)
             raise e
