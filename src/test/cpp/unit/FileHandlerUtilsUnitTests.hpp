@@ -29,7 +29,7 @@ namespace exqudens::log::util {
             std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
             std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
 
-            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase));
+            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase).value());
             std::cout << LOGGER_ID << " testInputDir: " << '"' << testInputDir.generic_string() << '"' << std::endl;
 
             std::string currentFile = (testInputDir / "log.txt").generic_string();
@@ -60,7 +60,7 @@ namespace exqudens::log::util {
             std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
             std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
 
-            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase));
+            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase).value());
             std::cout << LOGGER_ID << " testInputDir: " << '"' << testInputDir.generic_string() << '"' << std::endl;
 
             std::string currentFile = (testInputDir / "log.txt").generic_string();
@@ -91,7 +91,7 @@ namespace exqudens::log::util {
             std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
             std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
 
-            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase));
+            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase).value());
             std::cout << LOGGER_ID << " testInputDir: " << '"' << testInputDir.generic_string() << '"' << std::endl;
 
             std::string currentFile = (testInputDir / "log.txt").generic_string();
@@ -122,7 +122,7 @@ namespace exqudens::log::util {
             std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
             std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
 
-            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase));
+            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase).value());
             std::cout << LOGGER_ID << " testInputDir: " << '"' << testInputDir.generic_string() << '"' << std::endl;
 
             std::string currentFile = (testInputDir / "log.txt").generic_string();
@@ -153,7 +153,7 @@ namespace exqudens::log::util {
             std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
             std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
 
-            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase));
+            std::filesystem::path testInputDir(TestUtils::getTestInputDir(testGroup, testCase).value());
             std::cout << LOGGER_ID << " testInputDir: " << '"' << testInputDir.generic_string() << '"' << std::endl;
 
             std::string currentFile = (testInputDir / "log.txt").generic_string();

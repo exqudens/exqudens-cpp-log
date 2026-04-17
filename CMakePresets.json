@@ -237,7 +237,6 @@
         },
         {
             "name": "linux.ninja.gcc.release.shared",
-            "hidden": true,
             "inherits": ["default", "linux", "ninja", "gcc", "release", "shared"],
             "binaryDir": "${sourceDir}/build/104"
         },
@@ -249,25 +248,21 @@
         },
         {
             "name": "darwin.ninja.clang.debug.static",
-            "hidden": true,
             "inherits": ["default", "darwin", "ninja", "clang", "debug", "static"],
             "binaryDir": "${sourceDir}/build/201"
         },
         {
             "name": "darwin.ninja.clang.release.static",
-            "hidden": true,
             "inherits": ["default", "darwin", "ninja", "clang", "release", "static"],
             "binaryDir": "${sourceDir}/build/202"
         },
         {
             "name": "darwin.ninja.clang.debug.shared",
-            "hidden": true,
             "inherits": ["default", "darwin", "ninja", "clang", "debug", "shared"],
             "binaryDir": "${sourceDir}/build/203"
         },
         {
             "name": "darwin.ninja.clang.release.shared",
-            "hidden": true,
             "inherits": ["default", "darwin", "ninja", "clang", "release", "shared"],
             "binaryDir": "${sourceDir}/build/204"
         }

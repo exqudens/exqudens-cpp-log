@@ -56,6 +56,9 @@ class ConanConfiguration(ConanFile):
             for dep in self.dependencies.values():
                 for dir in dep.cpp_info.bindirs:
                     copy(self, pattern="*.dll", src=Path(dir).as_posix(), dst=Path(self.build_folder).joinpath("bin").as_posix())
+                for dir in dep.cpp_info.libdirs:
+                    copy(self, pattern="*.so", src=Path(dir).as_posix(), dst=Path(self.build_folder).joinpath("lib").as_posix())
+                    copy(self, pattern="*.so.*", src=Path(dir).as_posix(), dst=Path(self.build_folder).joinpath("lib").as_posix())
         except Exception as e:
             self.output.error(e)
             raise e
