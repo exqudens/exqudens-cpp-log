@@ -26,7 +26,10 @@ class ConanConfiguration(ConanFile):
 
     def requirements(self):
         try:
-            self.requires("exqudens-cpp-log-api/0.0.1", transitive_headers=True)
+            if self.user and self.channel:
+                self.requires(f"exqudens-cpp-log-api/0.0.1@{self.user}/{self.channel}", transitive_headers=True)
+            else:
+                self.requires("exqudens-cpp-log-api/0.0.1", transitive_headers=True)
         except Exception as e:
             self.output.error(e)
             raise e
