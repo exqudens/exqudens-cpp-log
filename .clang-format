@@ -1,0 +1,19 @@
+---
+# link: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+BasedOnStyle: 'LLVM'
+---
+Language: 'Cpp'
+IndentWidth: 4 # changed from: 2
+AllowShortFunctionsOnASingleLine: 'None' # changed from: 'All'
+BreakAfterReturnType: Automatic # changed from: 'None'
+ColumnLimit: 120 # changed from: 80
+EmptyLineAfterAccessModifier: 'Always' # changed from: 'Never'
+IndentAccessModifiers: true # changed from: false
+NamespaceIndentation: 'All' # changed from: 'None'
+PenaltyReturnTypeOnItsOwnLine: 120 # changed from: 60
+PointerAlignment: 'Left' # changed from: 'Right'
+TabWidth: 4 # changed from: 8
+WrapNamespaceBodyWithEmptyLines: 'Always' # changed from: 'Leave'
+KeepEmptyLines:
+    AtEndOfFile: true # changed from: false
+...

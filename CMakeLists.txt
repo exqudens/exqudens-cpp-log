@@ -76,6 +76,16 @@ elseif("gcc" IN_LIST PRESET_NAME_ELEMENTS)
             OUTPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/gcc-toolchain.cmake"
         )
     endif()
+elseif("clang" IN_LIST "PRESET_NAME_ELEMENTS")
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/clang-toolchain.cmake")
+        find_file(COMPILER_FILE NAMES "clang.exe" "clang" PATHS ENV CLANG_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
+        set_clang_toolchain(TOOLCHAIN_CONTENT
+            PROCESSOR "x86_64"
+            OS "${CMAKE_HOST_SYSTEM_NAME}"
+            PATH "${COMPILER_FILE}"
+            OUTPUT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/clang-toolchain.cmake"
+        )
+    endif()
 endif()
 message(STATUS "CMAKE_TOOLCHAIN_FILE: '${CMAKE_TOOLCHAIN_FILE}'")
 
@@ -141,6 +151,23 @@ set(CMAKE_C_EXTENSIONS "0")
 set(CMAKE_CXX_STANDARD "20")
 set(CMAKE_CXX_STANDARD_REQUIRED "1")
 set(CMAKE_CXX_EXTENSIONS "0")
+if("clang" IN_LIST "PRESET_NAME_ELEMENTS")
+    string(JOIN " " COVERAGE_FLAGS
+        "-fprofile-instr-generate"
+        "-fcoverage-mapping"
+        "-fcoverage-mcdc"
+        "-O0"
+    )
+
+    string(JOIN " " CMAKE_C_FLAGS_DEBUG "${COVERAGE_FLAGS}")
+    string(JOIN " " CMAKE_CXX_FLAGS_DEBUG "${COVERAGE_FLAGS}")
+
+    find_program(CLANG_FORMAT_COMMAND NAMES "clang-format.exe" "clang-format" PATHS ENV CLANG_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
+    find_program(CLANG_CHECK_COMMAND NAMES "clang-check.exe" "clang-check" PATHS ENV CLANG_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
+    find_program(CLANG_TIDY_COMMAND NAMES "clang-tidy.exe" "clang-tidy" PATHS ENV CLANG_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
+    find_program(LLVM_PROFDATA_COMMAND NAMES "llvm-profdata.exe" "llvm-profdata" PATHS ENV CLANG_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
+    find_program(LLVM_COV_COMMAND NAMES "llvm-cov.exe" "llvm-cov" PATHS ENV CLANG_PATH ENV PATH REQUIRED NO_CACHE NO_DEFAULT_PATH)
+endif()
 
 if("msvc-x64-x64" IN_LIST "PRESET_NAME_ELEMENTS")
     #set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} setupapi.lib")
@@ -183,6 +210,7 @@ file(MAKE_DIRECTORY "${CONAN_INSTALL_PREFIX}/test/lib")
 
 if("${USE_CONAN}")
     set_conan_architecture(CONAN_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+    set_conan_os(CONAN_OS "${CMAKE_SYSTEM_NAME}")
     set_conan_compiler(CONAN_COMPILER "${CMAKE_CXX_COMPILER_ID}")
     set_conan_compiler_version(CONAN_COMPILER_VERSION "${CMAKE_CXX_COMPILER_ID}" "${CMAKE_CXX_COMPILER_VERSION}" MAX_ELEMENTS "1")
     set_conan_compiler_runtime(CONAN_COMPILER_RUNTIME "${CMAKE_MSVC_RUNTIME_LIBRARY}")
@@ -276,6 +304,15 @@ if("${USE_CONAN}")
         list(APPEND CMAKE_PREFIX_PATH "${cmakePackagePath}")
     endforeach()
     if(NOT "${SKIP_TEST}")
+        if("${CONAN_OS}" STREQUAL "Windows" AND "clang" IN_LIST "PRESET_NAME_ELEMENTS")
+            list(APPEND "CONAN_SETTINGS"
+                "--settings" "gtest/*:compiler=msvc"
+                "--settings" "gtest/*:compiler.version=194"
+                "--settings" "gtest/*:compiler.runtime=${CONAN_COMPILER_RUNTIME}"
+                "--settings" "gtest/*:compiler.runtime_type=${CONAN_COMPILER_RUNTIME_TYPE}"
+                "--settings" "gtest/*:compiler.cppstd=20"
+            )
+        endif()
         if(NOT EXISTS "${CONAN_INSTALL_PREFIX}/test/conan-packages.cmake")
             #[[execute_process(
                 COMMAND "${CONAN_COMMAND}" "user" "$ENV{CONAN_LOGIN_USERNAME}" "-r" "artifactory" "-p"
@@ -702,6 +739,8 @@ if(NOT "${SKIP_TEST}")
 
     add_custom_command(
         OUTPUT "${PROJECT_BINARY_DIR}/junit.xml"
+               "${PROJECT_BINARY_DIR}/test/bin/default.profraw"
+        COMMAND "${CMAKE_COMMAND}" "-E" "rm" "-f" "${PROJECT_BINARY_DIR}/test/bin/default.profraw"
         COMMAND "${CMAKE_CTEST_COMMAND}"
                 "--build-nocmake"
                 "--output-junit" "${PROJECT_BINARY_DIR}/junit.xml"
@@ -758,6 +797,89 @@ if("${USE_CONAN}")
 
     add_custom_target("conan-list"
         COMMAND "${CONAN_COMMAND}" "list" "${PROJECT_NAME}/${PROJECT_VERSION}:*"
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        USES_TERMINAL
+        VERBATIM
+    )
+endif()
+
+add_custom_target("apply-clang-format"
+    COMMAND "${CLANG_FORMAT_COMMAND}"
+            "-Werror"
+            "-i"
+            #"src/main/cpp/exqudens/Log.hpp"
+            ${LIB_SOURCES}
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    USES_TERMINAL
+    VERBATIM
+)
+add_custom_target("analyze-clang-format"
+    #COMMAND "${CMAKE_COMMAND}" "-E" "rm" "-f" "${PROJECT_BINARY_DIR}/test/bin/report/xml/clang-format.xml"
+    COMMAND "${CLANG_FORMAT_COMMAND}"
+            #"--help"
+            #"-style=llvm"
+            #"-dump-config" ">" ".clang-format-new"
+            "-Werror"
+            "--dry-run"
+            #"--output-replacements-xml" ">" "${PROJECT_BINARY_DIR_REL}/test/bin/report/xml/clang-format.xml"
+            #"src/main/cpp/exqudens/Log.hpp"
+            ${LIB_SOURCES}
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    USES_TERMINAL
+    VERBATIM
+)
+add_custom_target("analyze-clang-check"
+    COMMAND "${CMAKE_COMMAND}" "-E" "make_directory" "${PROJECT_BINARY_DIR}/test/bin/report/xml"
+    COMMAND "${CMAKE_COMMAND}" "-E" "rm" "-f" "${PROJECT_BINARY_DIR}/test/bin/report/xml/clang-check.xml"
+    COMMAND "${CLANG_CHECK_COMMAND}"
+            #"--help"
+            "--analyze"
+            "--analyzer-output-path=${PROJECT_BINARY_DIR_REL}/test/bin/report/xml/clang-check.xml"
+            "-p" "${PROJECT_BINARY_DIR}"
+            #"src/main/cpp/exqudens/Log.hpp"
+            ${LIB_SOURCES}
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    USES_TERMINAL
+    VERBATIM
+)
+add_custom_target("analyze-clang-tidy"
+    COMMAND "${CLANG_TIDY_COMMAND}"
+            #"--help"
+            "-p" "${PROJECT_BINARY_DIR}"
+            #"--checks=*" "--dump-config" ">" ".clang-tidy-new"
+            "--allow-no-checks"
+            "--config-file=.clang-tidy"
+            #"src/main/cpp/exqudens/Log.hpp"
+            ${LIB_SOURCES}
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    USES_TERMINAL
+    VERBATIM
+)
+
+if("clang" IN_LIST "PRESET_NAME_ELEMENTS" AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    add_custom_target("cmake-test-coverage"
+        COMMAND "${CMAKE_COMMAND}" "-E" "rm" "-f" "${PROJECT_BINARY_DIR}/test/bin/default.profdata"
+        COMMAND "${CMAKE_COMMAND}" "-E" "rm" "-rf" "${PROJECT_BINARY_DIR}/test/report"
+        COMMAND "${CMAKE_COMMAND}" "-E" "make_directory" "${PROJECT_BINARY_DIR}/test/report/json"
+        COMMAND "${LLVM_PROFDATA_COMMAND}" "merge" "-sparse" "${PROJECT_BINARY_DIR_REL}/test/bin/default.profraw" "-o" "${PROJECT_BINARY_DIR_REL}/test/bin/default.profdata"
+        COMMAND "${LLVM_COV_COMMAND}" "show"
+                "-show-mcdc"
+                "-format" "html"
+                "-instr-profile" "${PROJECT_BINARY_DIR_REL}/test/bin/default.profdata"
+                "-object" "${PROJECT_BINARY_DIR_REL}/test/bin/$<TARGET_FILE_NAME:test-app>"
+                "-output-dir" "${PROJECT_BINARY_DIR_REL}/test/report/html"
+        COMMAND "${LLVM_COV_COMMAND}" "report"
+                "-show-functions"
+                "-instr-profile" "${PROJECT_BINARY_DIR_REL}/test/bin/default.profdata"
+                "-object" "${PROJECT_BINARY_DIR_REL}/test/bin/$<TARGET_FILE_NAME:test-app>"
+                "-sources" "src/main/cpp/exqudens/Log.hpp"
+        COMMAND "${LLVM_COV_COMMAND}" "export"
+                "-format" "text"
+                "-instr-profile" "${PROJECT_BINARY_DIR_REL}/test/bin/default.profdata"
+                "-object" "${PROJECT_BINARY_DIR_REL}/test/bin/$<TARGET_FILE_NAME:test-app>"
+                "-sources" "src/main/cpp/exqudens/Log.hpp"
+                ">" "${PROJECT_BINARY_DIR_REL}/test/report/json/llvm-cov-export.json"
+        DEPENDS "${PROJECT_BINARY_DIR}/test/bin/default.profraw"
         WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
         USES_TERMINAL
         VERBATIM

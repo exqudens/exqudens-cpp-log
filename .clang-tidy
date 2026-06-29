@@ -1,0 +1,60 @@
+---
+Checks: [
+    '*',
+    '-altera-unroll-loops',
+    '-llvm-header-guard',
+    '-llvm-include-order',
+    '-llvm-namespace-comment',
+    '-llvmlibc-callee-namespace',
+    '-llvmlibc-restrict-system-libc-headers',
+    '-llvmlibc-implementation-in-namespace',
+    '-llvmlibc-inline-function-decl',
+    '-misc-include-cleaner',
+    '-misc-const-correctness',
+    '-google-readability-namespace-comments',
+    '-readability-magic-numbers',
+    '-modernize-use-trailing-return-type',
+    '-hicpp-special-member-functions',
+    '-cppcoreguidelines-special-member-functions',
+    '-cppcoreguidelines-avoid-magic-numbers',
+    '-portability-avoid-pragma-once',
+]
+WarningsAsErrors: ''
+HeaderFileExtensions: [
+ 'hpp'
+]
+ImplementationFileExtensions: [
+ 'cpp'
+]
+HeaderFilterRegex: '.*'
+ExcludeHeaderFilterRegex: ''
+FormatStyle: 'none'
+User: 'anonymous'
+SystemHeaders: false
+CheckOptions:
+    readability-identifier-naming.NamespaceCase: 'lower_case'
+    readability-identifier-naming.MacroDefinitionCase: 'UPPER_CASE'
+    readability-identifier-naming.StaticConstantCase: 'UPPER_CASE'
+    readability-identifier-naming.ConstexprVariableCase: 'UPPER_CASE'
+    readability-identifier-naming.EnumConstantCase: 'UPPER_CASE'
+    readability-identifier-naming.EnumCase: 'UPPER_CASE'
+    readability-identifier-naming.GlobalConstantCase: 'UPPER_CASE'
+    readability-identifier-naming.ClassCase: 'CamelCase'
+    readability-identifier-naming.TypedefCase: 'CamelCase'
+    readability-identifier-naming.TypeAliasCase: 'CamelCase'
+    readability-identifier-naming.ParameterCase: 'camelBack'
+    readability-identifier-naming.FunctionCase: 'camelBack'
+    readability-identifier-naming.VariableCase: 'camelBack'
+    readability-identifier-naming.ClassMemberCase: 'camelBack'
+    readability-identifier-naming.StaticVariableCase: 'camelBack'
+    readability-identifier-naming.PublicMemberCase: 'camelBack'
+    readability-identifier-naming.ProtectedMemberCase: 'camelBack'
+    readability-identifier-naming.PrivateMemberCase: 'camelBack'
+    readability-identifier-naming.StaticConstantPrefix: ''
+    readability-identifier-naming.ConstexprVariablePrefix: ''
+    readability-identifier-naming.GlobalConstantPrefix: ''
+    readability-identifier-naming.EnumConstantPrefix: ''
+    readability-identifier-naming.PublicMemberSuffix: ''
+    readability-identifier-naming.ProtectedMemberSuffix: ''
+    readability-identifier-naming.PrivateMemberSuffix: ''
+...
