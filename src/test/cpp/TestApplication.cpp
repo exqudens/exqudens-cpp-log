@@ -16,19 +16,18 @@
 // include test files
 #include "unit/FormatterUtilsUnitTests.hpp"
 #include "unit/FileHandlerUtilsUnitTests.hpp"
-
 #include "unit/FormatterServiceUnitTests.hpp"
-
+#include "unit/JsonUtilsUnitTests.hpp"
 #include "unit/LogUnitTests.hpp"
 
 #include "integration/LogIntegrationTests.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
-int TestApplication::run(int argc, char** argv) {
+int32_t TestApplication::run(int32_t argc, char** argv) {
     try {
         std::vector<std::string> args = {};
-        for (int i = 0; i < argc; i++) {
+        for (int32_t i = 0; i < argc; i++) {
             std::cout << "argv[" << i << "]: '" << argv[i] << "'" << std::endl;
             args.emplace_back(argv[i]);
         }
@@ -38,7 +37,7 @@ int TestApplication::run(int argc, char** argv) {
         testing::InitGoogleMock(&argc, argv);
         testing::InitGoogleTest(&argc, argv);
 
-        int result = RUN_ALL_TESTS();
+        int32_t result = RUN_ALL_TESTS();
 
         return result;
     } catch (const std::exception& e) {

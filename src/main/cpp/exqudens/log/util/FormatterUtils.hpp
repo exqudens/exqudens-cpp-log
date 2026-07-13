@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <optional>
 #include <vector>
@@ -29,9 +30,9 @@ namespace exqudens::log::util {
 
             static std::vector<std::string> splitFormat(const std::string& format, const std::set<std::string>& targets, char escape);
 
-            static std::string toStringTimestamp(const std::chrono::system_clock::time_point& value, const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse);
+            static std::string toStringTimestamp(const std::chrono::system_clock::time_point& value, const std::string& format, uint16_t seconds, const std::map<uint16_t, int32_t>& secondsDeviderMap, size_t size, bool reverse);
 
-            static std::string toStringLevel(unsigned short value, bool name, const std::map<unsigned short, std::string>& levelNameMap, size_t size, bool reverse);
+            static std::string toStringLevel(uint16_t value, bool name, const std::map<uint16_t, std::string>& levelNameMap, size_t size, bool reverse);
 
             static std::string toStringThread(const std::thread::id& value, size_t size, bool reverse);
 
@@ -103,7 +104,7 @@ namespace exqudens::log::util {
         }
     }
 
-    EXQUDENS_LOG_INLINE std::string FormatterUtils::toStringTimestamp(const std::chrono::system_clock::time_point& value, const std::string& format, unsigned short seconds, const std::map<unsigned short, long long>& secondsDeviderMap, size_t size, bool reverse) {
+    EXQUDENS_LOG_INLINE std::string FormatterUtils::toStringTimestamp(const std::chrono::system_clock::time_point& value, const std::string& format, uint16_t seconds, const std::map<uint16_t, int32_t>& secondsDeviderMap, size_t size, bool reverse) {
         try {
             seconds = seconds > 9 ? 9 : seconds;
 
@@ -121,7 +122,7 @@ namespace exqudens::log::util {
                 std::chrono::nanoseconds valueSinceEpochNanoSeconds = std::chrono::duration_cast<std::chrono::nanoseconds>(valueSinceEpoch);
                 valueSinceEpochNanoSeconds = valueSinceEpochNanoSeconds % 1000000000;
                 if (seconds < 9) {
-                    long long devider = secondsDeviderMap.at(seconds);
+                    int32_t devider = secondsDeviderMap.at(seconds);
                     valueSinceEpochNanoSeconds = valueSinceEpochNanoSeconds / devider;
                 }
                 outputStream << '.' << std::setfill('0') << std::setw(seconds) << valueSinceEpochNanoSeconds.count();
@@ -136,7 +137,7 @@ namespace exqudens::log::util {
         }
     }
 
-    EXQUDENS_LOG_INLINE std::string FormatterUtils::toStringLevel(unsigned short value, bool name, const std::map<unsigned short, std::string>& levelNameMap, size_t size, bool reverse) {
+    EXQUDENS_LOG_INLINE std::string FormatterUtils::toStringLevel(uint16_t value, bool name, const std::map<uint16_t, std::string>& levelNameMap, size_t size, bool reverse) {
         try {
             std::string result = {};
 

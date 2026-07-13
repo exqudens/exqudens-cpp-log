@@ -450,6 +450,15 @@ set(LIB_SOURCES
     "src/main/cpp/${BASE_DIR}/util/FormatterUtils.hpp"
     "src/main/cpp/${BASE_DIR}/util/FileHandlerUtils.hpp"
 
+    "src/main/cpp/${BASE_DIR}/util/JsonUtils.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Array.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Object.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Value.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Lexer.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Parser.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Token.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/TokenType.hpp"
+
     "src/main/cpp/exqudens/Log.hpp"
 )
 
@@ -611,9 +620,8 @@ if(NOT "${SKIP_TEST}")
 
         "src/test/cpp/unit/FormatterUtilsUnitTests.hpp"
         "src/test/cpp/unit/FileHandlerUtilsUnitTests.hpp"
-
         "src/test/cpp/unit/FormatterServiceUnitTests.hpp"
-
+        "src/test/cpp/unit/JsonUtilsUnitTests.hpp"
         "src/test/cpp/unit/LogUnitTests.hpp"
 
         "src/test/cpp/integration/LogIntegrationTests.hpp"
@@ -888,7 +896,7 @@ endif()
 
 add_custom_target("vscode"
     COMMAND "${CMAKE_COMMAND}" "-E" "make_directory" "${PROJECT_SOURCE_DIR}/.vscode"
-    COMMAND "${CMAKE_COMMAND}" "-E" "copy" "${PROJECT_SOURCE_DIR}/src/test/resources/vscode/tasks.json" "${PROJECT_SOURCE_DIR}/.vscode"
+    #COMMAND "${CMAKE_COMMAND}" "-E" "copy" "${PROJECT_SOURCE_DIR}/src/test/resources/vscode/tasks.json" "${PROJECT_SOURCE_DIR}/.vscode"
     COMMAND "${CMAKE_COMMAND}" "-P" "cmake/util.cmake" "--" "vscode"
             SOURCE_DIR "${PROJECT_SOURCE_DIR}"
             BINARY_DIR "${PROJECT_BINARY_DIR}"

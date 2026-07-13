@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <set>
 #include <map>
@@ -58,7 +59,7 @@ namespace exqudens::log::model {
             FORMATTER_FORMAT_PLACE_HOLDER_MESSAGE
         };
 
-        inline static const std::map<unsigned short, long long> FORMATTER_PARAMETER_TIMESTAMP_SECONDS_DEVIDER_MAP = {
+        inline static const std::map<uint16_t, int32_t> FORMATTER_PARAMETER_TIMESTAMP_SECONDS_DEVIDER_MAP = {
             {1, 100000000},
             {2, 10000000},
             {3, 1000000},
@@ -85,14 +86,14 @@ namespace exqudens::log::model {
 
         inline static const std::string CONFIGURATION_ID_DEFAULT = "programmable";
 
-        inline static const unsigned short LOGGER_LEVEL_ID_FATAL = 1;
-        inline static const unsigned short LOGGER_LEVEL_ID_ERROR = 2;
-        inline static const unsigned short LOGGER_LEVEL_ID_WARNING = 3;
-        inline static const unsigned short LOGGER_LEVEL_ID_INFO = 4;
-        inline static const unsigned short LOGGER_LEVEL_ID_DEBUG = 5;
-        inline static const unsigned short LOGGER_LEVEL_ID_TRACE = 6;
+        inline static const uint16_t LOGGER_LEVEL_ID_FATAL = 1;
+        inline static const uint16_t LOGGER_LEVEL_ID_ERROR = 2;
+        inline static const uint16_t LOGGER_LEVEL_ID_WARNING = 3;
+        inline static const uint16_t LOGGER_LEVEL_ID_INFO = 4;
+        inline static const uint16_t LOGGER_LEVEL_ID_DEBUG = 5;
+        inline static const uint16_t LOGGER_LEVEL_ID_TRACE = 6;
 
-        inline static const std::map<unsigned short, std::string> LOGGER_LEVEL_ID_NAME_MAP = {
+        inline static const std::map<uint16_t, std::string> LOGGER_LEVEL_ID_NAME_MAP = {
             {LOGGER_LEVEL_ID_FATAL, "FATAL"},
             {LOGGER_LEVEL_ID_ERROR, "ERROR"},
             {LOGGER_LEVEL_ID_WARNING, "WARNING"},

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <functional>
@@ -19,7 +20,7 @@ namespace exqudens::log::model {
     struct EXQUDENS_LOG_API_EXPORT Logger {
 
         std::string id;
-        unsigned short level;
+        uint16_t level;
         std::vector<Handler> handlers;
 
         std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)> createConsoleHandlerFunction;

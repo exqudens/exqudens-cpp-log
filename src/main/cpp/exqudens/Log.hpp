@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <set>
@@ -60,13 +62,13 @@ namespace exqudens {
 
             static std::map<std::string, exqudens::log::model::FormatterConfiguration::Parameter> defaultFormatterParameters(
                 const std::string& timestampFormat,
-                unsigned short timestampFormatSecondsDivider
+                uint16_t timestampFormatSecondsDivider
             );
 
             static std::map<std::string, exqudens::log::model::FormatterConfiguration> defaultFormatterConfigurations(
                 const std::string& format,
                 const std::string& timestampFormat,
-                unsigned short timestampFormatSecondsDivider
+                uint16_t timestampFormatSecondsDivider
             );
 
             static std::map<std::string, exqudens::log::model::HandlerConfiguration> defaultHandlerConfigurations(
@@ -77,17 +79,17 @@ namespace exqudens {
 
             static std::map<std::string, exqudens::log::model::LoggerConfiguration> defaultLoggerConfigurations(
                 const std::vector<std::string>& handlers,
-                const std::map<std::string, unsigned short>& loggerIdLevelMap
+                const std::map<std::string, uint16_t>& loggerIdLevelMap
             );
 
             static exqudens::log::model::Configuration defaultConfiguration(
                 const std::string& file,
                 size_t fileSize,
                 const std::map<std::string,
-                unsigned short>& loggerIdLevelMap,
+                uint16_t>& loggerIdLevelMap,
                 const std::string& format,
                 const std::string& timestampFormat,
-                unsigned short timestampFormatSecondsDivider
+                uint16_t timestampFormatSecondsDivider
             );
 
             static exqudens::log::model::Service defaultServiceModel(
@@ -97,18 +99,18 @@ namespace exqudens {
                 const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createHandlerFunction
             );
 
-            static std::map<unsigned short, std::string> loggerLevelIdNameMap() noexcept;
+            static std::map<uint16_t, std::string> loggerLevelIdNameMap() noexcept;
 
-            static std::vector<std::pair<unsigned short, std::string>> loggerLevelIdNameVector() noexcept;
+            static std::vector<std::pair<uint16_t, std::string>> loggerLevelIdNameVector() noexcept;
 
             static std::string configure(
                 const std::string& file = "log/log.txt",
                 size_t fileSize = 1073741824,
                 const std::set<std::string>& loggerIdSet = {},
-                const std::map<std::string, unsigned short>& loggerIdLevelMap = {},
+                const std::map<std::string, uint16_t>& loggerIdLevelMap = {},
                 const std::string& format = "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}",
                 const std::string& timestampFormat = "%Y-%m-%d %H:%M:%S",
-                unsigned short timestampFormatSecondsDivider = 9,
+                uint16_t timestampFormatSecondsDivider = 9,
                 const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createConsoleHandlerFunction = {},
                 const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createFileHandlerFunction = {},
                 const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createHandlerFunction = {}
@@ -140,7 +142,7 @@ namespace exqudens {
 
     EXQUDENS_LOG_INLINE std::map<std::string, exqudens::log::model::FormatterConfiguration::Parameter> Log::defaultFormatterParameters(
         const std::string& timestampFormat,
-        unsigned short timestampFormatSecondsDivider
+        uint16_t timestampFormatSecondsDivider
     ) {
         try {
             std::map<std::string, exqudens::log::model::FormatterConfiguration::Parameter> result = {};
@@ -221,7 +223,7 @@ namespace exqudens {
     EXQUDENS_LOG_INLINE std::map<std::string, exqudens::log::model::FormatterConfiguration> Log::defaultFormatterConfigurations(
         const std::string& format,
         const std::string& timestampFormat,
-        unsigned short timestampFormatSecondsDivider
+        uint16_t timestampFormatSecondsDivider
     ) {
         try {
             std::map<std::string, exqudens::log::model::FormatterConfiguration> result = {};
@@ -273,14 +275,14 @@ namespace exqudens {
     EXQUDENS_LOG_INLINE std::map<std::string, exqudens::log::model::LoggerConfiguration> Log::defaultLoggerConfigurations(
         const std::vector<std::string>& handlers,
         const std::map<std::string,
-        unsigned short>& loggerIdLevelMap
+        uint16_t>& loggerIdLevelMap
     ) {
         try {
             std::map<std::string, exqudens::log::model::LoggerConfiguration> result = {};
 
             exqudens::log::model::LoggerConfiguration logger = {};
             logger.id = exqudens::log::model::Constant::LOGGER_ID_ROOT;
-            unsigned short loggerLevel = exqudens::log::model::Constant::LOGGER_LEVEL_ID_INFO;
+            uint16_t loggerLevel = exqudens::log::model::Constant::LOGGER_LEVEL_ID_INFO;
             if (loggerIdLevelMap.contains(logger.id) && exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.contains(loggerIdLevelMap.at(logger.id))) {
                 loggerLevel = loggerIdLevelMap.at(logger.id);
             }
@@ -289,7 +291,7 @@ namespace exqudens {
 
             result[logger.id] = logger;
 
-            for (const std::pair<std::string, unsigned short>& entry : loggerIdLevelMap) {
+            for (const std::pair<std::string, uint16_t>& entry : loggerIdLevelMap) {
                 if (entry.first == logger.id) {
                     continue;
                 }
@@ -313,10 +315,10 @@ namespace exqudens {
     EXQUDENS_LOG_INLINE exqudens::log::model::Configuration Log::defaultConfiguration(
         const std::string& file,
         size_t fileSize,
-        const std::map<std::string, unsigned short>& loggerIdLevelMap,
+        const std::map<std::string, uint16_t>& loggerIdLevelMap,
         const std::string& format,
         const std::string& timestampFormat,
-        unsigned short timestampFormatSecondsDivider
+        uint16_t timestampFormatSecondsDivider
     ) {
         try {
             exqudens::log::model::Configuration output = {};
@@ -355,12 +357,12 @@ namespace exqudens {
         }
     }
 
-    EXQUDENS_LOG_INLINE std::map<unsigned short, std::string> Log::loggerLevelIdNameMap() noexcept {
+    EXQUDENS_LOG_INLINE std::map<uint16_t, std::string> Log::loggerLevelIdNameMap() noexcept {
         return exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP;
     }
 
-    EXQUDENS_LOG_INLINE std::vector<std::pair<unsigned short, std::string>> Log::loggerLevelIdNameVector() noexcept {
-        return std::vector<std::pair<unsigned short, std::string>>(
+    EXQUDENS_LOG_INLINE std::vector<std::pair<uint16_t, std::string>> Log::loggerLevelIdNameVector() noexcept {
+        return std::vector<std::pair<uint16_t, std::string>>(
             exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.begin(),
             exqudens::log::model::Constant::LOGGER_LEVEL_ID_NAME_MAP.end()
         );
@@ -370,16 +372,16 @@ namespace exqudens {
         const std::string &file,
         size_t fileSize,
         const std::set<std::string>& loggerIdSet,
-        const std::map<std::string, unsigned short>& loggerIdLevelMap,
+        const std::map<std::string, uint16_t>& loggerIdLevelMap,
         const std::string& format,
         const std::string& timestampFormat,
-        unsigned short timestampFormatSecondsDivider,
+        uint16_t timestampFormatSecondsDivider,
         const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createConsoleHandlerFunction,
         const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createFileHandlerFunction,
         const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createHandlerFunction
     ) {
         try {
-            std::map<std::string, unsigned short> internalLoggerIdLevelMap = loggerIdLevelMap;
+            std::map<std::string, uint16_t> internalLoggerIdLevelMap = loggerIdLevelMap;
 
             for (const std::string& loggerId : loggerIdSet) {
                 internalLoggerIdLevelMap.try_emplace(loggerId, 0);
@@ -451,7 +453,7 @@ namespace exqudens::log::api {
         size_t line,
         std::string function,
         std::string id,
-        unsigned short level
+        uint16_t level
     ):
         file(std::move(file)),
         line(line),
@@ -499,7 +501,7 @@ namespace exqudens::log::api {
         const size_t line,
         const std::string& function,
         const std::string& id,
-        const unsigned short level,
+        const uint16_t level,
         const std::string& message
     ) noexcept {
         try {

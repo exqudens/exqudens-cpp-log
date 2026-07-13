@@ -26,7 +26,7 @@ namespace exqudens::log::service {
                 });
 
                 ON_CALL(*this, toString)
-                .WillByDefault([this](exqudens::log::model::Data& data, const std::string& file, const size_t line, const std::string& function, const std::string& id, const unsigned short level, const std::string& message) {
+                .WillByDefault([this](exqudens::log::model::Data& data, const std::string& file, const size_t line, const std::string& function, const std::string& id, const uint16_t level, const std::string& message) {
                     return real.toString(data, file, line, function, id, level, message);
                 });
 
@@ -34,7 +34,7 @@ namespace exqudens::log::service {
                 .WillByDefault([this](const std::string& value) {});
 
                 ON_CALL(*this, write)
-                .WillByDefault([this](exqudens::log::model::Data& data, const std::string& file, const size_t line, const std::string& function, const std::string& id, const unsigned short level, const std::string& message) {
+                .WillByDefault([this](exqudens::log::model::Data& data, const std::string& file, const size_t line, const std::string& function, const std::string& id, const uint16_t level, const std::string& message) {
                     std::string event = toString(data, file, line, function, id, level, message);
                     writeString(event);
                 });
@@ -42,9 +42,9 @@ namespace exqudens::log::service {
 
             MOCK_METHOD(void, configure, (const exqudens::log::model::Handler&), (override));
             MOCK_METHOD(bool, isConfigured, (), (override));
-            MOCK_METHOD(std::string, toString, (exqudens::log::model::Data&, const std::string&, const size_t, const std::string&, const std::string&, const unsigned short, const std::string&), (override));
+            MOCK_METHOD(std::string, toString, (exqudens::log::model::Data&, const std::string&, const size_t, const std::string&, const std::string&, const uint16_t, const std::string&), (override));
             MOCK_METHOD(void, writeString, (const std::string&), (override));
-            MOCK_METHOD(void, write, (exqudens::log::model::Data&, const std::string&, const size_t, const std::string&, const std::string&, const unsigned short, const std::string&), (override));
+            MOCK_METHOD(void, write, (exqudens::log::model::Data&, const std::string&, const size_t, const std::string&, const std::string&, const uint16_t, const std::string&), (override));
 
     };
 

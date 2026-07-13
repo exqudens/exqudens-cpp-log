@@ -39,7 +39,6 @@
             "internalConsoleOptions": "openOnSessionStart",
             "MIMode": "gdb",
             "cwd": "${workspaceRoot}",
-            "preLaunchTask": "test-app",
             "program": "@_BINARY_DIR@/test/bin/test-app",
             "args": [
                 "--project-binary-dir=@_BINARY_DIR@",

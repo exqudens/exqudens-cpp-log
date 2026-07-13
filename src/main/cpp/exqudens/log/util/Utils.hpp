@@ -38,6 +38,7 @@ namespace exqudens::log::util {
 
 // implementation ---
 
+#include <cstddef>
 #include <numeric>
 #include <algorithm>
 #include <sstream>

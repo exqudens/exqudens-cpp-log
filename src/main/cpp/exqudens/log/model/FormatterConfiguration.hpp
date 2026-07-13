@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <map>
 
@@ -19,7 +20,7 @@ namespace exqudens::log::model {
 
             std::string id = {};
             std::string format = {};
-            unsigned short seconds = 0;
+            uint16_t seconds = 0;
             std::string base = {};
             bool name = false;
             size_t size = 0;

@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <map>
@@ -38,7 +39,7 @@ namespace exqudens::log::service {
                 const size_t line,
                 const std::string& function,
                 const std::string& id,
-                const unsigned short level,
+                const uint16_t level,
                 const std::string& message
             );
 
@@ -82,7 +83,7 @@ namespace exqudens::log::service {
         const size_t line,
         const std::string& function,
         const std::string& id,
-        const unsigned short level,
+        const uint16_t level,
         const std::string& message
     ) {
         try {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include "test_lib_export.hpp"
 
 class TEST_LIB_EXPORT TestApplication {
@@ -10,6 +12,6 @@ class TEST_LIB_EXPORT TestApplication {
 
     public:
 
-        static int run(int argc, char** argv);
+        static int32_t run(int32_t argc, char** argv);
 
 };

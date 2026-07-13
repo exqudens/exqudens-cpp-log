@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -15,7 +16,7 @@ namespace exqudens::log::model {
     struct EXQUDENS_LOG_API_EXPORT LoggerConfiguration {
 
         std::string id;
-        unsigned short level;
+        uint16_t level;
         std::vector<std::string> handlers;
 
     };

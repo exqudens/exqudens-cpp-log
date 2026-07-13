@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <cstddef>
+#include <string>
 #include <fstream>
 
 #include "exqudens/log/service/HandlerService.hpp"
