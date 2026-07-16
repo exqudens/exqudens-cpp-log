@@ -1,0 +1,44 @@
+{
+    "formatters": {
+        "formatter": {
+            "format": "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}",
+            "parameters": {
+                "timestamp": {"format": "%Y-%m-%d %H:%M:%S", "seconds": 8, "size": 5, "reverse": true},
+                "level": {"name": true, "size": 5, "reverse": true},
+                "thread": {"size": 5, "reverse": true},
+                "logger": {"size": 5, "reverse": true},
+                "function": {"size": 5, "reverse": true},
+                "file": {"base": "src/main/cpp", "name": true, "size": 5, "reverse": true},
+                "line": {"size": 5, "reverse": true},
+                "message": {"size": 5, "reverse": true}
+            }
+        }
+    },
+    "handlers": {
+        "console": {
+            "type": "console",
+            "level": 1,
+            "stream": "stdout",
+            "formatter": "formatter"
+        },
+        "file": {
+            "type": "file",
+            "level": 1,
+            "file": "log.txt",
+            "size": 1024,
+            "formatter": "formatter"
+        }
+    },
+    "loggers": {
+        "root": {
+            "level": 1,
+            "handlers": [
+                "console",
+                "file"
+            ]
+        },
+        "abc": {
+            "level": 7
+        }
+    }
+}

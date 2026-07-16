@@ -19,6 +19,7 @@ namespace exqudens::log::service {
 
         protected:
 
+            uint16_t level = 0;
             std::shared_ptr<FormatterService> formatter = nullptr;
             std::string stream = {};
             std::string file = {};
@@ -77,6 +78,7 @@ namespace exqudens::log::service {
 
     EXQUDENS_LOG_INLINE void HandlerService::configure(const exqudens::log::model::Handler& config) {
         try {
+            level = config.level;
             formatter = std::make_shared<FormatterService>();
             formatter->configure(config.formatter);
             if (!formatter->isConfigured()) {
@@ -157,6 +159,9 @@ namespace exqudens::log::service {
         const std::string& message
     ) {
         try {
+            if (level == 0 || level > this->level) {
+                return;
+            }
             std::string event = toString(
                 data,
                 file,

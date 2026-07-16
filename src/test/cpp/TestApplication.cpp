@@ -21,6 +21,7 @@
 #include "unit/LogUnitTests.hpp"
 
 #include "integration/LogIntegrationTests.hpp"
+#include "integration/LoggingIntegrationTests.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 

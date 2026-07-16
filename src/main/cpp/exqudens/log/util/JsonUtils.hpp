@@ -6,14 +6,14 @@
 #pragma once
 
 #include <string>
+#include <optional>
 #include <vector>
 #include <set>
 #include <map>
 
 #include "exqudens/log/export.hpp"
-#include "exqudens/log/util/json/Parser.hpp"
+#include "exqudens/log/util/json/Value.hpp"
 #include "exqudens/log/model/Configuration.hpp"
-#include "exqudens/log/model/Constant.hpp"
 
 namespace exqudens::log::util {
 
@@ -58,7 +58,8 @@ namespace exqudens::log::util {
 
             static exqudens::log::model::LoggerConfiguration toLoggerConfiguration(
                 const json::Value& jsonValue,
-                const std::vector<std::string>& parentKeys
+                const std::vector<std::string>& parentKeys,
+                const std::optional<exqudens::log::model::LoggerConfiguration>& rootLoggerConfiguration = {}
             );
 
     };
@@ -70,6 +71,9 @@ namespace exqudens::log::util {
 #include <stdexcept>
 #include <filesystem>
 #include <numeric>
+
+#include "exqudens/log/util/json/Parser.hpp"
+#include "exqudens/log/model/Constant.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
@@ -168,6 +172,19 @@ namespace exqudens::log::util {
             }
 
             json::Object jsonObject = jsonValue.get<json::Object>();
+
+            if (!jsonObject.contains("formatters")) {
+                throw std::runtime_error(CALL_INFO + ": json value missing key: 'formatters'!");
+            }
+
+            if (!jsonObject.contains("handlers")) {
+                throw std::runtime_error(CALL_INFO + ": json value missing key: 'handlers'!");
+            }
+
+            if (!jsonObject.contains("loggers")) {
+                throw std::runtime_error(CALL_INFO + ": json value missing key: 'loggers'!");
+            }
+
             exqudens::log::model::Configuration result = {};
 
             for (const auto& jsonObjectPair : jsonObject) {
@@ -203,10 +220,23 @@ namespace exqudens::log::util {
                         throw std::runtime_error(CALL_INFO + ": json '" + jsonObjectPair.first + "' value is not an object!");
                     }
                     json::Object loggersJsonObject = jsonObjectPair.second.get<json::Object>();
+                    if (!loggersJsonObject.contains(exqudens::log::model::Constant::LOGGER_ID_ROOT)) {
+                        throw std::runtime_error(CALL_INFO + ": json '" + join({jsonObjectPair.first}) + "' value missing key: '" + exqudens::log::model::Constant::LOGGER_ID_ROOT + "'!");
+                    }
+                    auto rootLogger = toLoggerConfiguration(
+                        loggersJsonObject.at(exqudens::log::model::Constant::LOGGER_ID_ROOT),
+                        {jsonObjectPair.first, exqudens::log::model::Constant::LOGGER_ID_ROOT}
+                    );
+                    rootLogger.id = exqudens::log::model::Constant::LOGGER_ID_ROOT;
+                    result.loggers[rootLogger.id] = rootLogger;
                     for (const auto& loggersJsonObjectPair : loggersJsonObject) {
+                        if (loggersJsonObjectPair.first == exqudens::log::model::Constant::LOGGER_ID_ROOT) {
+                            continue;
+                        }
                         auto logger = toLoggerConfiguration(
                             loggersJsonObjectPair.second,
-                            {jsonObjectPair.first, loggersJsonObjectPair.first}
+                            {jsonObjectPair.first, loggersJsonObjectPair.first},
+                            rootLogger
                         );
                         logger.id = loggersJsonObjectPair.first;
                         result.loggers[logger.id] = logger;
@@ -229,7 +259,7 @@ namespace exqudens::log::util {
     ) {
         try {
             if (!jsonValue.is_object()) {
-                throw std::runtime_error(CALL_INFO + ": 'exqudens::log::model::FormatterConfiguration' json value is not an object!");
+                throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys) + "' value is not an object!");
             }
 
             json::Object jsonObject = jsonValue.get<json::Object>();
@@ -374,6 +404,11 @@ namespace exqudens::log::util {
                         throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is not a string!");
                     }
                     result.type = jsonObjectPair.second.get<std::string>();
+                } else if (std::string("level") == jsonObjectPair.first) {
+                    if (!jsonObjectPair.second.is_number()) {
+                        throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is not a number!");
+                    }
+                    result.level = static_cast<uint16_t>(jsonObjectPair.second.get<double>());
                 } else if (std::string("stream") == jsonObjectPair.first) {
                     if (!jsonObjectPair.second.is_string()) {
                         throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is not a string!");
@@ -407,15 +442,35 @@ namespace exqudens::log::util {
 
     EXQUDENS_LOG_INLINE exqudens::log::model::LoggerConfiguration JsonUtils::toLoggerConfiguration(
         const json::Value& jsonValue,
-        const std::vector<std::string>& parentKeys
+        const std::vector<std::string>& parentKeys,
+        const std::optional<exqudens::log::model::LoggerConfiguration>& rootLoggerConfiguration
     ) {
         try {
             if (!jsonValue.is_object()) {
                 throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys) + "' value is not an object!");
             }
 
+            if (parentKeys.empty()) {
+                throw std::runtime_error(CALL_INFO + ": 'parentKeys' is empty!");
+            }
+
             json::Object jsonObject = jsonValue.get<json::Object>();
-            exqudens::log::model::LoggerConfiguration result = {};
+
+            if (parentKeys.back() == exqudens::log::model::Constant::LOGGER_ID_ROOT) {
+                if (!jsonObject.contains("level")) {
+                    throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys) + "' value missing key: 'level'!");
+                }
+
+                if (!jsonObject.contains("handlers")) {
+                    throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys) + "' value missing key: 'handlers'!");
+                }
+            } else {
+                if (!jsonObject.contains("level") && !jsonObject.contains("handlers")) {
+                    throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys) + "' value missing keys: 'level' or 'handlers'!");
+                }
+            }
+
+            exqudens::log::model::LoggerConfiguration result = rootLoggerConfiguration.value_or({});
 
             for (const auto& jsonObjectPair : jsonObject) {
                 if (std::string("level") == jsonObjectPair.first) {
@@ -423,6 +478,9 @@ namespace exqudens::log::util {
                         throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is not a number!");
                     }
                     result.level = static_cast<uint16_t>(jsonObjectPair.second.get<double>());
+                    if (result.level > exqudens::log::model::Constant::LOGGER_LEVEL_ID_TRACE) {
+                        throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is greater than max allowed: " + std::to_string(exqudens::log::model::Constant::LOGGER_LEVEL_ID_TRACE) + "!");
+                    }
                 } else if (std::string("handlers") == jsonObjectPair.first) {
                     if (!jsonObjectPair.second.is_array()) {
                         throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is not an array!");
@@ -435,6 +493,9 @@ namespace exqudens::log::util {
                         }
                         std::string handler = jsonArray.at(i).get<std::string>();
                         handlers.emplace_back(handler);
+                    }
+                    if (handlers.empty()) {
+                        throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' value is empty!");
                     }
                     result.handlers = handlers;
                 } else {

@@ -16,7 +16,6 @@
 #include "TestUtils.hpp"
 
 #include "exqudens/log/service/FormatterService.hpp"
-#include "exqudens/Log.hpp"
 #include "exqudens/log/util/ModelUtils.hpp"
 #include "exqudens/log/model/Constant.hpp"
 
@@ -45,7 +44,7 @@ TEST_F(FormatterServiceUnitTests, test_1) {
         std::string expected = {};
         std::string actual = {};
 
-        configuration = exqudens::Log::defaultConfiguration(
+        configuration = exqudens::log::util::ModelUtils::defaultConfiguration(
             "log/log.txt",
             1073741824,
             {},
@@ -53,7 +52,7 @@ TEST_F(FormatterServiceUnitTests, test_1) {
             "%Y-%m-%d %H:%M:%S",
             9
         );
-        serviceModel = exqudens::Log::defaultServiceModel(configuration, {}, {}, {});
+        serviceModel = exqudens::log::util::ModelUtils::defaultServiceModel(configuration, {}, {}, {});
         loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(serviceModel);
         config = loggerMap.at(exqudens::log::model::Constant::LOGGER_ID_ROOT).handlers.at(0).formatter;
         //config.parameters[exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_TIMESTAMP].size = 10;

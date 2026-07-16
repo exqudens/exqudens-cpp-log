@@ -625,6 +625,7 @@ if(NOT "${SKIP_TEST}")
         "src/test/cpp/unit/LogUnitTests.hpp"
 
         "src/test/cpp/integration/LogIntegrationTests.hpp"
+        "src/test/cpp/integration/LoggingIntegrationTests.hpp"
     )
     generate_export_header("test-lib"
         BASE_NAME "TEST_LIB"

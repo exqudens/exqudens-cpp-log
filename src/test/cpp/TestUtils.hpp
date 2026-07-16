@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <any>
 #include <optional>
 #include <vector>
 #include <map>
@@ -60,11 +59,5 @@ class TEST_LIB_EXPORT TestUtils {
         static std::string join(const std::vector<std::string>& value, const std::string& delimiter = "", const std::string& prefix = "", const std::string& suffix = "");
 
         static std::string toString(const std::vector<std::string>& value);
-
-        static std::string toString(const std::any& value);
-
-        static std::string toString(const std::map<std::string, std::any>& value);
-
-        static std::string toString(const std::vector<std::any>& value);
 
 };

@@ -8,6 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <optional>
 #include <map>
 
 #include "exqudens/log/export.hpp"
@@ -21,6 +22,7 @@ namespace exqudens::log::service {
         private:
 
             std::map<std::string, LoggerService> loggers = {};
+            std::optional<exqudens::log::model::Logger> rootLoggerConfig = {};
             bool configured = false;
 
         public:
@@ -66,6 +68,9 @@ namespace exqudens::log::service {
         try {
             std::map<std::string, exqudens::log::model::Logger> loggerMap = exqudens::log::util::ModelUtils::toLoggerMap(config);
             for (const std::pair<std::string, exqudens::log::model::Logger>& entry : loggerMap) {
+                if (!rootLoggerConfig.has_value() && entry.first == exqudens::log::model::Constant::LOGGER_ID_ROOT) {
+                    rootLoggerConfig = entry.second;
+                }
                 LoggerService logger;
                 logger.configure(entry.second);
                 if (!logger.isConfigured()) {
@@ -101,19 +106,18 @@ namespace exqudens::log::service {
             }
 
             if (!loggers.contains(id)) {
-                loggers.at(exqudens::log::model::Constant::LOGGER_ID_ROOT).write(
-                    file,
-                    line,
-                    function,
-                    id,
-                    level,
-                    "missing configuration"
-                );
-                return;
+                LoggerService logger;
+                exqudens::log::model::Logger loggerConfig = rootLoggerConfig.value();
+                loggerConfig.id = id;
+                logger.configure(loggerConfig);
+                if (!logger.isConfigured()) {
+                    throw std::runtime_error(CALL_INFO + ": logger: '" + id + "' is not configured");
+                }
+                loggers.insert({id, logger});
             }
 
             if (!loggers.at(id).isConfigured()) {
-                throw std::runtime_error(CALL_INFO + ": logger '" + exqudens::log::model::Constant::LOGGER_ID_ROOT + "' not configured");
+                throw std::runtime_error(CALL_INFO + ": logger '" + id + "' not configured");
             }
 
             loggers.at(id).write(
