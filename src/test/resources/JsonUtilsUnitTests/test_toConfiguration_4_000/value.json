@@ -29,19 +29,5 @@
             "formatter": "formatter"
         }
     },
-    "loggers": {
-        "root": {
-            "level": 1,
-            "handlers": [
-                "console",
-                "file"
-            ]
-        },
-        "abc": {
-            "handlers": [
-                "console"
-            ]
-        }
-    },
-    "abc": {}
+    "loggers": 1
 }

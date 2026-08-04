@@ -450,14 +450,14 @@ set(LIB_SOURCES
     "src/main/cpp/${BASE_DIR}/util/FormatterUtils.hpp"
     "src/main/cpp/${BASE_DIR}/util/FileHandlerUtils.hpp"
 
-    "src/main/cpp/${BASE_DIR}/util/JsonUtils.hpp"
     "src/main/cpp/${BASE_DIR}/util/json/Array.hpp"
-    "src/main/cpp/${BASE_DIR}/util/json/Object.hpp"
-    "src/main/cpp/${BASE_DIR}/util/json/Value.hpp"
     "src/main/cpp/${BASE_DIR}/util/json/Lexer.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Object.hpp"
     "src/main/cpp/${BASE_DIR}/util/json/Parser.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Schema.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Serializer.hpp"
     "src/main/cpp/${BASE_DIR}/util/json/Token.hpp"
-    "src/main/cpp/${BASE_DIR}/util/json/TokenType.hpp"
+    "src/main/cpp/${BASE_DIR}/util/json/Value.hpp"
 
     "src/main/cpp/exqudens/Log.hpp"
 )

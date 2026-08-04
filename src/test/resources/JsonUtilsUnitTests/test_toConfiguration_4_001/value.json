@@ -30,18 +30,6 @@
         }
     },
     "loggers": {
-        "root": {
-            "level": 1,
-            "handlers": [
-                "console",
-                "file"
-            ]
-        },
-        "abc": {
-            "handlers": [
-                "console"
-            ]
-        }
-    },
-    "abc": {}
+        "root": 1
+    }
 }

@@ -1,4 +1,9 @@
 {
+    "formatters": {
+        "formatter": {
+            "format": 1
+        }
+    },
     "handlers": {
         "console": {
             "type": "console",

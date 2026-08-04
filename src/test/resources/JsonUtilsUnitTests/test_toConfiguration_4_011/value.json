@@ -39,9 +39,8 @@
         },
         "abc": {
             "handlers": [
-                "console"
+                123
             ]
         }
-    },
-    "abc": {}
+    }
 }

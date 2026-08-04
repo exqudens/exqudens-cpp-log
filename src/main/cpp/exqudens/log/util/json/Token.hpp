@@ -2,12 +2,28 @@
 
 #include <string>
 
-#include "exqudens/log/util/json/TokenType.hpp"
+#include "exqudens/log/export.hpp"
 
 namespace exqudens::log::util::json {
 
-    struct Token {
-        TokenType type;
+    struct EXQUDENS_LOG_API_EXPORT Token {
+
+        enum class EXQUDENS_LOG_API_EXPORT Type {
+            ObjectOpen,
+            ObjectClose,
+            ArrayOpen,
+            ArrayClose,
+            Colon,
+            Comma,
+            String,
+            Number,
+            True,
+            False,
+            Null,
+            EndOfFile
+        };
+
+        Type type;
         std::string value;
     };
 }

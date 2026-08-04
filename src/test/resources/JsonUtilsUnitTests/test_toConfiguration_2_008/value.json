@@ -10,7 +10,8 @@
                 "function": {"size": 5, "reverse": true},
                 "file": {"base": "src/main/cpp", "name": true, "size": 5, "reverse": true},
                 "line": {"size": 5, "reverse": true},
-                "message": {"size": 5, "reverse": true}
+                "message": {"size": 5, "reverse": true},
+                "abc": 1
             }
         }
     },
@@ -42,6 +43,5 @@
                 "console"
             ]
         }
-    },
-    "abc": {}
+    }
 }
