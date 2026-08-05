@@ -26,7 +26,7 @@ class LoggingIntegrationTests: public testing::Test {
         }
 
         static void TearDownTestSuite() {
-            std::filesystem::current_path(std::filesystem::path(defaultWorkingDirectory.value()));
+            std::filesystem::current_path(defaultWorkingDirectory.value());
         }
 
     protected:
@@ -35,12 +35,15 @@ class LoggingIntegrationTests: public testing::Test {
             std::string currentTestGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
             std::string currentTestCase = testing::UnitTest::GetInstance()->current_test_info()->name();
             std::string currentTestOutputDir = TestUtils::getTestOutputDir(currentTestGroup, currentTestCase).value();
-            std::filesystem::create_directories(std::filesystem::path(currentTestOutputDir));
-            std::filesystem::current_path(std::filesystem::path(currentTestOutputDir));
+            if (std::filesystem::exists(currentTestOutputDir)) {
+                std::filesystem::remove_all(currentTestOutputDir);
+            }
+            std::filesystem::create_directories(currentTestOutputDir);
+            std::filesystem::current_path(currentTestOutputDir);
         }
 
         void TearDown() override {
-            std::filesystem::current_path(std::filesystem::path(defaultWorkingDirectory.value()));
+            std::filesystem::current_path(defaultWorkingDirectory.value());
         }
 
 };
@@ -58,7 +61,7 @@ TEST_F(LoggingIntegrationTests, test_1) {
         std::string testInputJson = TestUtils::readFileString(testInputJsonFile);
 
         std::string loggingConfigType = exqudens::log::api::Logging::configure(testInputJson);
-        EXQUDENS_LOG(LOGGER_ID, 6) << " loggingConfigType: '" << loggingConfigType << "'";
+        EXQUDENS_LOG(LOGGER_ID, 6) << "loggingConfigType: '" << loggingConfigType << "'";
 
         ASSERT_TRUE(exqudens::log::api::Logging::isConfigured());
 

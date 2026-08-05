@@ -1,7 +1,10 @@
 {
     "formatters": {
         "formatter": {
-            "format": "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}"
+            "format": "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}",
+            "parameters": {
+                "timestamp": {"format": "%Y-%m-%d %H:%M:%S", "seconds": 9}
+            }
         }
     },
     "handlers": {

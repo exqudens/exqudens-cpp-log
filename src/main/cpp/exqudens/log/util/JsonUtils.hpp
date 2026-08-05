@@ -68,8 +68,8 @@ namespace exqudens::log::util {
                                                 .add("seconds", json::Value().setObject(
                                                     json::Object()
                                                     .add("type", json::Value().setString("integer"))
-                                                    .add("minimum", json::Value().setInteger(1))
-                                                    .add("maximum", json::Value().setInteger(8))
+                                                    .add("minimum", json::Value().setInteger(0))
+                                                    .add("maximum", json::Value().setInteger(9))
                                                 ))
                                                 .add("size", json::Value().setObject(
                                                     json::Object()
