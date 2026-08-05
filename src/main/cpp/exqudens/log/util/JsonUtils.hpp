@@ -59,34 +59,160 @@ namespace exqudens::log::util {
                                         .add("timestamp", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("format", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("string"))
+                                                ))
+                                                .add("seconds", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                    .add("maximum", json::Value().setInteger(8))
+                                                ))
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("level", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("name", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("thread", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("logger", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("function", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("file", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("base", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("string"))
+                                                ))
+                                                .add("name", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("line", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                         .add("message", json::Value().setObject(
                                             json::Object()
                                             .add("type", json::Value().setString("object"))
+                                            .add("properties", json::Value().setObject(
+                                                json::Object()
+                                                .add("size", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("integer"))
+                                                    .add("minimum", json::Value().setInteger(1))
+                                                ))
+                                                .add("reverse", json::Value().setObject(
+                                                    json::Object()
+                                                    .add("type", json::Value().setString("boolean"))
+                                                ))
+                                            ))
+                                            .add("additionalProperties", json::Value().setBoolean(false))
                                         ))
                                     ))
                                     .add("additionalProperties", json::Value().setBoolean(false))
@@ -98,6 +224,47 @@ namespace exqudens::log::util {
                     .add("handlers", json::Value().setObject(
                         json::Object()
                         .add("type", json::Value().setString("object"))
+                        .add("minProperties", json::Value().setInteger(1))
+                        .add("additionalProperties", json::Value().setObject(
+                            json::Object()
+                            .add("type", json::Value().setString("object"))
+                            .add("required", json::Value().setArray(
+                                json::Array()
+                                .add(json::Value().setString("type"))
+                                .add(json::Value().setString("formatter"))
+                            ))
+                            .add("properties", json::Value().setObject(
+                                json::Object()
+                                .add("type", json::Value().setObject(
+                                    json::Object()
+                                    .add("type", json::Value().setString("string"))
+                                ))
+                                .add("level", json::Value().setObject(
+                                    json::Object()
+                                    .add("type", json::Value().setString("integer"))
+                                    .add("minimum", json::Value().setInteger(0))
+                                    .add("maximum", json::Value().setInteger(6))
+                                ))
+                                .add("stream", json::Value().setObject(
+                                    json::Object()
+                                    .add("type", json::Value().setString("string"))
+                                ))
+                                .add("file", json::Value().setObject(
+                                    json::Object()
+                                    .add("type", json::Value().setString("string"))
+                                ))
+                                .add("size", json::Value().setObject(
+                                    json::Object()
+                                    .add("type", json::Value().setString("integer"))
+                                    .add("minimum", json::Value().setInteger(1))
+                                ))
+                                .add("formatter", json::Value().setObject(
+                                    json::Object()
+                                    .add("type", json::Value().setString("string"))
+                                ))
+                            ))
+                            .add("additionalProperties", json::Value().setBoolean(false))
+                        ))
                     ))
                     .add("loggers", json::Value().setObject(
                         json::Object()

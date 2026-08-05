@@ -1,0 +1,39 @@
+{
+    "formatters": {
+        "formatter": {
+            "format": "${timestamp} ${level} ${logger} [${thread}] ${function}(${file}:${line}): ${message}",
+            "parameters": {
+                "file": 1
+            }
+        }
+    },
+    "handlers": {
+        "console": {
+            "type": "console",
+            "level": 6,
+            "stream": "stdout",
+            "formatter": "formatter"
+        },
+        "file": {
+            "type": "file",
+            "level": 6,
+            "file": "log.txt",
+            "size": 1024,
+            "formatter": "formatter"
+        }
+    },
+    "loggers": {
+        "root": {
+            "level": 1,
+            "handlers": [
+                "console",
+                "file"
+            ]
+        },
+        "abc": {
+            "handlers": [
+                "console"
+            ]
+        }
+    }
+}
