@@ -1216,4 +1216,88 @@ TEST_F(JsonUtilsUnitTests, test_toConfiguration_4_011) {
     }
 }
 
+TEST_F(JsonUtilsUnitTests, test_toConfiguration_5_000) {
+    try {
+        std::string testGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
+        std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
+
+        std::string testInputDir = TestUtils::getTestInputDir(testGroup, testCase).value();
+        std::string testInputJsonFile = std::filesystem::path(testInputDir).append("value.json").generic_string();
+        std::string testInputJson = TestUtils::readFileString(testInputJsonFile);
+        std::cout << LOGGER_ID << " testInputJson: '" << testInputJson << "'" << std::endl;
+
+        bool valid = false;
+        std::string errorMessage = {};
+        exqudens::log::util::JsonUtils::toConfiguration(testInputJson, valid, errorMessage);
+        std::cout << LOGGER_ID << " valid: " << valid << std::endl;
+        std::cout << LOGGER_ID << " errorMessage: '" << errorMessage << "'" << std::endl;
+
+        ASSERT_FALSE(valid);
+        ASSERT_EQ(std::string("[loggers] -> [root] -> [handlers] -> [0] 'handlers' not contains: 'console_1'"), errorMessage);
+
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " end" << std::endl;
+    } catch (const std::exception& e) {
+        std::string errorMessage = TestUtils::toString(e);
+        std::cout << LOGGER_ID << " ERROR: " << errorMessage << std::endl;
+        FAIL() << errorMessage;
+    }
+}
+
+TEST_F(JsonUtilsUnitTests, test_toConfiguration_5_001) {
+    try {
+        std::string testGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
+        std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
+
+        std::string testInputDir = TestUtils::getTestInputDir(testGroup, testCase).value();
+        std::string testInputJsonFile = std::filesystem::path(testInputDir).append("value.json").generic_string();
+        std::string testInputJson = TestUtils::readFileString(testInputJsonFile);
+        std::cout << LOGGER_ID << " testInputJson: '" << testInputJson << "'" << std::endl;
+
+        bool valid = false;
+        std::string errorMessage = {};
+        exqudens::log::util::JsonUtils::toConfiguration(testInputJson, valid, errorMessage);
+        std::cout << LOGGER_ID << " valid: " << valid << std::endl;
+        std::cout << LOGGER_ID << " errorMessage: '" << errorMessage << "'" << std::endl;
+
+        ASSERT_FALSE(valid);
+        ASSERT_EQ(std::string("[handlers] -> [console] -> [formatter] 'formatters' not contains: 'formatter_1'"), errorMessage);
+
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " end" << std::endl;
+    } catch (const std::exception& e) {
+        std::string errorMessage = TestUtils::toString(e);
+        std::cout << LOGGER_ID << " ERROR: " << errorMessage << std::endl;
+        FAIL() << errorMessage;
+    }
+}
+
+TEST_F(JsonUtilsUnitTests, test_toConfiguration_5_002) {
+    try {
+        std::string testGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
+        std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
+
+        std::string testInputDir = TestUtils::getTestInputDir(testGroup, testCase).value();
+        std::string testInputJsonFile = std::filesystem::path(testInputDir).append("value.json").generic_string();
+        std::string testInputJson = TestUtils::readFileString(testInputJsonFile);
+        std::cout << LOGGER_ID << " testInputJson: '" << testInputJson << "'" << std::endl;
+
+        bool valid = false;
+        std::string errorMessage = {};
+        exqudens::log::util::JsonUtils::toConfiguration(testInputJson, valid, errorMessage);
+        std::cout << LOGGER_ID << " valid: " << valid << std::endl;
+        std::cout << LOGGER_ID << " errorMessage: '" << errorMessage << "'" << std::endl;
+
+        ASSERT_FALSE(valid);
+        ASSERT_EQ(std::string("[handlers] -> [console] -> [stream] not supported: 'stdout_1' supported: [stderr', 'stdout]"), errorMessage);
+
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " end" << std::endl;
+    } catch (const std::exception& e) {
+        std::string errorMessage = TestUtils::toString(e);
+        std::cout << LOGGER_ID << " ERROR: " << errorMessage << std::endl;
+        FAIL() << errorMessage;
+    }
+}
+
 #undef CALL_INFO

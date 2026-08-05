@@ -355,18 +355,16 @@ namespace exqudens::log::util {
 
             static json::Value getConfigurationSchemaJsonValue();
 
-            static exqudens::log::model::Configuration toConfiguration(const json::Value& jsonValue);
+            static exqudens::log::model::Configuration toConfiguration(const json::Value& jsonValue, bool& valid, std::string& errorMessage);
 
             static exqudens::log::model::FormatterConfiguration toFormatterConfiguration(
                 const json::Value& jsonValue,
-                const std::vector<std::string>& parentKeys,
-                const std::set<std::string>& validKeys
+                const std::vector<std::string>& parentKeys
             );
 
             static exqudens::log::model::FormatterConfiguration::Parameter toFormatterConfigurationParameter(
                 const json::Value& jsonValue,
-                const std::vector<std::string>& parentKeys,
-                const std::set<std::string>& validKeys
+                const std::vector<std::string>& parentKeys
             );
 
             static exqudens::log::model::HandlerConfiguration toHandlerConfiguration(
@@ -379,6 +377,8 @@ namespace exqudens::log::util {
                 const std::vector<std::string>& parentKeys,
                 const std::optional<exqudens::log::model::LoggerConfiguration>& rootLoggerConfiguration = {}
             );
+
+            static std::string toString(const std::set<std::string>& value);
 
     };
 
@@ -414,7 +414,7 @@ namespace exqudens::log::util {
             json::Value valueJson = parse(value, valid, errorMessage);
             exqudens::log::model::Configuration result = {};
             if (valid) {
-                result = toConfiguration(valueJson);
+                result = toConfiguration(valueJson, valid, errorMessage);
             }
             return result;
         } catch (...) {
@@ -496,7 +496,7 @@ namespace exqudens::log::util {
         }
     }
 
-    EXQUDENS_LOG_INLINE exqudens::log::model::Configuration JsonUtils::toConfiguration(const json::Value& jsonValue) {
+    EXQUDENS_LOG_INLINE exqudens::log::model::Configuration JsonUtils::toConfiguration(const json::Value& jsonValue, bool& valid, std::string& errorMessage) {
         try {
             json::Object jsonObject = jsonValue.getObject();
 
@@ -508,8 +508,7 @@ namespace exqudens::log::util {
                     for (const auto& formattersJsonObjectPair : formattersJsonObject) {
                         auto formatter = toFormatterConfiguration(
                             formattersJsonObjectPair.second,
-                            {jsonObjectPair.first, formattersJsonObjectPair.first},
-                            exqudens::log::model::Constant::FORMATTER_PARAMETER_IDS
+                            {jsonObjectPair.first, formattersJsonObjectPair.first}
                         );
                         formatter.id = formattersJsonObjectPair.first;
                         result.formatters[formatter.id] = formatter;
@@ -549,6 +548,35 @@ namespace exqudens::log::util {
                 }
             }
 
+            for (const auto& loggersPair : result.loggers) {
+                for (size_t i = 0; i < loggersPair.second.handlers.size(); i++) {
+                    if (!result.handlers.contains(loggersPair.second.handlers.at(i))) {
+                        valid = false;
+                        errorMessage = "[loggers] -> [" + loggersPair.first + "] -> [handlers] -> [" + std::to_string(i) + "] 'handlers' not contains: '" + loggersPair.second.handlers.at(i) + "'";
+                        return result;
+                    }
+                }
+            }
+
+            for (const auto& handlersPair : result.handlers) {
+                if (!result.formatters.contains(handlersPair.second.formatter)) {
+                    valid = false;
+                    errorMessage = "[handlers] -> [" + handlersPair.first + "] -> [formatter] 'formatters' not contains: '" + handlersPair.second.formatter + "'";
+                    return result;
+                }
+                if (
+                    handlersPair.second.type == exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE
+                    && !exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE_STREAMS.contains(handlersPair.second.stream)
+                ) {
+                    valid = false;
+                    errorMessage = "[handlers] -> [" + handlersPair.first + "] -> [stream] not supported: '" + handlersPair.second.stream + "' supported: " + toString(exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE_STREAMS);
+                    return result;
+                }
+            }
+
+            valid = true;
+            errorMessage = "";
+
             return result;
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
@@ -557,8 +585,7 @@ namespace exqudens::log::util {
 
     EXQUDENS_LOG_INLINE exqudens::log::model::FormatterConfiguration JsonUtils::toFormatterConfiguration(
         const json::Value& jsonValue,
-        const std::vector<std::string>& parentKeys,
-        const std::set<std::string>& validKeys
+        const std::vector<std::string>& parentKeys
     ) {
         try {
             json::Object jsonObject = jsonValue.getObject();
@@ -570,38 +597,9 @@ namespace exqudens::log::util {
                 } else if (std::string("parameters") == jsonObjectPair.first) {
                     json::Object parametersJsonObject = jsonObjectPair.second.getObject();
                     for (const auto& parametersJsonObjectPair : parametersJsonObject) {
-                        if (!validKeys.contains(parametersJsonObjectPair.first)) {
-                            throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys, {jsonObjectPair.first}) + "' unexpected key: '" + parametersJsonObjectPair.first + "'!");
-                        }
-                        std::set<std::string> parameterValidKeys = {};
-                        if (parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_TIMESTAMP) {
-                            parameterValidKeys.insert("format");
-                            parameterValidKeys.insert("seconds");
-                            parameterValidKeys.insert("size");
-                            parameterValidKeys.insert("reverse");
-                        } else if (parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_LEVEL) {
-                            parameterValidKeys.insert("name");
-                            parameterValidKeys.insert("size");
-                            parameterValidKeys.insert("reverse");
-                        } else if (
-                            parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_THREAD
-                            || parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_LOGGER
-                            || parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_FUNCTION
-                            || parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_LINE
-                            || parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_MESSAGE
-                        ) {
-                            parameterValidKeys.insert("size");
-                            parameterValidKeys.insert("reverse");
-                        } else if (parametersJsonObjectPair.first == exqudens::log::model::Constant::FORMATTER_PARAMETER_ID_FILE) {
-                            parameterValidKeys.insert("base");
-                            parameterValidKeys.insert("name");
-                            parameterValidKeys.insert("size");
-                            parameterValidKeys.insert("reverse");
-                        }
                         auto parameter = toFormatterConfigurationParameter(
                             parametersJsonObjectPair.second,
-                            add(parentKeys, {jsonObjectPair.first, parametersJsonObjectPair.first}),
-                            parameterValidKeys
+                            add(parentKeys, {jsonObjectPair.first, parametersJsonObjectPair.first})
                         );
                         parameter.id = parametersJsonObjectPair.first;
                         result.parameters[parameter.id] = parameter;
@@ -619,28 +617,25 @@ namespace exqudens::log::util {
 
     EXQUDENS_LOG_INLINE exqudens::log::model::FormatterConfiguration::Parameter JsonUtils::toFormatterConfigurationParameter(
         const json::Value& jsonValue,
-        const std::vector<std::string>& parentKeys,
-        const std::set<std::string>& validKeys
+        const std::vector<std::string>& parentKeys
     ) {
         try {
             json::Object jsonObject = jsonValue.getObject();
             exqudens::log::model::FormatterConfiguration::Parameter result = {};
 
             for (const auto& jsonObjectPair : jsonObject) {
-                if (validKeys.contains(jsonObjectPair.first)) {
-                    if (std::string("format") == jsonObjectPair.first) {
-                        result.format = jsonObjectPair.second.getString();
-                    } else if (std::string("seconds") == jsonObjectPair.first) {
-                        result.seconds = static_cast<uint16_t>(jsonObjectPair.second.getInteger());
-                    } else if (std::string("size") == jsonObjectPair.first) {
-                        result.seconds = static_cast<size_t>(jsonObjectPair.second.getInteger());
-                    } else if (std::string("reverse") == jsonObjectPair.first) {
-                        result.name = jsonObjectPair.second.getBoolean();
-                    } else if (std::string("name") == jsonObjectPair.first) {
-                        result.name = jsonObjectPair.second.getBoolean();
-                    } else if (std::string("base") == jsonObjectPair.first) {
-                        result.base = jsonObjectPair.second.getString();
-                    }
+                if (std::string("format") == jsonObjectPair.first) {
+                    result.format = jsonObjectPair.second.getString();
+                } else if (std::string("seconds") == jsonObjectPair.first) {
+                    result.seconds = static_cast<uint16_t>(jsonObjectPair.second.getInteger());
+                } else if (std::string("size") == jsonObjectPair.first) {
+                    result.seconds = static_cast<size_t>(jsonObjectPair.second.getInteger());
+                } else if (std::string("reverse") == jsonObjectPair.first) {
+                    result.name = jsonObjectPair.second.getBoolean();
+                } else if (std::string("name") == jsonObjectPair.first) {
+                    result.name = jsonObjectPair.second.getBoolean();
+                } else if (std::string("base") == jsonObjectPair.first) {
+                    result.base = jsonObjectPair.second.getString();
                 } else {
                     throw std::runtime_error(CALL_INFO + ": json '" + join(parentKeys) + "' unexpected key: '" + jsonObjectPair.first + "'!");
                 }
@@ -719,6 +714,18 @@ namespace exqudens::log::util {
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }
+    }
+
+    EXQUDENS_LOG_INLINE std::string JsonUtils::toString(const std::set<std::string>& value) {
+        std::string result = "";
+        std::string delimiter = "', '";
+        for (const std::string& v : value) {
+            if (!result.empty()) {
+                result += delimiter;
+            }
+            result += v;
+        }
+        return "[" + result + "]";
     }
 
 }
