@@ -446,6 +446,7 @@ set(LIB_SOURCES
     "src/main/cpp/${BASE_DIR}/service/Service.hpp"
 
     "src/main/cpp/${BASE_DIR}/util/Utils.hpp"
+    "src/main/cpp/exqudens/log/util/FileUtils.hpp"
     "src/main/cpp/${BASE_DIR}/util/ModelUtils.hpp"
     "src/main/cpp/${BASE_DIR}/util/FormatterUtils.hpp"
     "src/main/cpp/${BASE_DIR}/util/FileHandlerUtils.hpp"

@@ -389,11 +389,13 @@ namespace exqudens::log::util {
 #include <stdexcept>
 #include <filesystem>
 #include <numeric>
+#include <limits>
 
 #include "exqudens/log/util/json/Serializer.hpp"
 #include "exqudens/log/util/json/Parser.hpp"
 #include "exqudens/log/util/json/Schema.hpp"
 #include "exqudens/log/model/Constant.hpp"
+#include "exqudens/log/util/ModelUtils.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
@@ -572,6 +574,14 @@ namespace exqudens::log::util {
                     errorMessage = "[handlers] -> [" + handlersPair.first + "] -> [stream] not supported: '" + handlersPair.second.stream + "' supported: " + toString(exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE_STREAMS);
                     return result;
                 }
+                if (
+                    handlersPair.second.type == exqudens::log::model::Constant::HANDLER_TYPE_FILE
+                    && handlersPair.second.file.empty()
+                ) {
+                    valid = false;
+                    errorMessage = "[handlers] -> [" + handlersPair.first + "] -> [file] is empty or not set";
+                    return result;
+                }
             }
 
             valid = true;
@@ -590,6 +600,7 @@ namespace exqudens::log::util {
         try {
             json::Object jsonObject = jsonValue.getObject();
             exqudens::log::model::FormatterConfiguration result = {};
+            result.parameters = exqudens::log::util::ModelUtils::defaultFormatterParameters();
 
             for (const auto& jsonObjectPair : jsonObject) {
                 if (std::string("format") == jsonObjectPair.first) {
@@ -655,6 +666,9 @@ namespace exqudens::log::util {
             json::Object jsonObject = jsonValue.getObject();
 
             exqudens::log::model::HandlerConfiguration result = {};
+            result.level = exqudens::log::model::Constant::LOGGER_LEVEL_ID_TRACE;
+            result.stream = exqudens::log::model::Constant::HANDLER_TYPE_CONSOLE_STREAM_OUT;
+            result.size = std::numeric_limits<std::intmax_t>::max();
 
             for (const auto& jsonObjectPair : jsonObject) {
                 if (std::string("type") == jsonObjectPair.first) {

@@ -94,6 +94,8 @@ namespace exqudens {
 #include "exqudens/log/service/Service.hpp"
 #include "exqudens/log/util/ModelUtils.hpp"
 #include "exqudens/log/util/Utils.hpp"
+#include "exqudens/log/util/FileUtils.hpp"
+#include "exqudens/log/util/JsonUtils.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
@@ -224,14 +226,27 @@ namespace exqudens::log::api {
 
     EXQUDENS_LOG_INLINE std::string Logging::configure(const std::any& input) {
         try {
-            if (input.type() != typeid(exqudens::log::model::Service)) {
+            exqudens::log::model::Service serviceModel = {};
+            if (input.type() == typeid(exqudens::log::model::Service)) {
+                serviceModel = std::any_cast<exqudens::log::model::Service>(input);
+            } else if (input.type() == typeid(std::string)) {
+                std::string stringInput = std::any_cast<std::string>(input);
+                exqudens::log::model::Configuration configurationModel = exqudens::log::util::JsonUtils::toConfiguration(stringInput);
+                serviceModel = exqudens::log::util::ModelUtils::defaultServiceModel(configurationModel);
+                serviceModel.id = "json";
+            } else if (input.type() == typeid(std::filesystem::path)) {
+                std::filesystem::path pathInput = std::any_cast<std::filesystem::path>(input);
+                std::string stringInput = exqudens::log::util::FileUtils::readFileToString(pathInput.generic_string());
+                exqudens::log::model::Configuration configurationModel = exqudens::log::util::JsonUtils::toConfiguration(stringInput);
+                serviceModel = exqudens::log::util::ModelUtils::defaultServiceModel(configurationModel);
+                serviceModel.id = "file: '" + pathInput.generic_string() + "'";
+            } else {
                 throw std::runtime_error(CALL_INFO + ": unsupported input type: '" + input.type().name() + "' supported type: '" + typeid(exqudens::log::model::Service).name() + "'");
             }
-            exqudens::log::model::Service config = std::any_cast<exqudens::log::model::Service>(input);
             std::shared_ptr<exqudens::log::service::Service> service = std::make_shared<exqudens::log::service::Service>();
-            service->configure(config);
+            service->configure(serviceModel);
             Logging::data = service;
-            return config.id;
+            return serviceModel.id;
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }

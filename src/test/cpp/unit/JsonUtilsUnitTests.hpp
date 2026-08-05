@@ -1300,4 +1300,32 @@ TEST_F(JsonUtilsUnitTests, test_toConfiguration_5_002) {
     }
 }
 
+TEST_F(JsonUtilsUnitTests, test_toConfiguration_5_003) {
+    try {
+        std::string testGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
+        std::string testCase = testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " bgn" << std::endl;
+
+        std::string testInputDir = TestUtils::getTestInputDir(testGroup, testCase).value();
+        std::string testInputJsonFile = std::filesystem::path(testInputDir).append("value.json").generic_string();
+        std::string testInputJson = TestUtils::readFileString(testInputJsonFile);
+        std::cout << LOGGER_ID << " testInputJson: '" << testInputJson << "'" << std::endl;
+
+        bool valid = false;
+        std::string errorMessage = {};
+        exqudens::log::util::JsonUtils::toConfiguration(testInputJson, valid, errorMessage);
+        std::cout << LOGGER_ID << " valid: " << valid << std::endl;
+        std::cout << LOGGER_ID << " errorMessage: '" << errorMessage << "'" << std::endl;
+
+        ASSERT_FALSE(valid);
+        ASSERT_EQ(std::string("[handlers] -> [file] -> [file] is empty or not set"), errorMessage);
+
+        std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " end" << std::endl;
+    } catch (const std::exception& e) {
+        std::string errorMessage = TestUtils::toString(e);
+        std::cout << LOGGER_ID << " ERROR: " << errorMessage << std::endl;
+        FAIL() << errorMessage;
+    }
+}
+
 #undef CALL_INFO

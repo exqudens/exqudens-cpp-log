@@ -20,6 +20,11 @@ namespace exqudens::log::util {
 
     class EXQUDENS_LOG_API_EXPORT ModelUtils {
 
+        private:
+
+            inline static const std::string DEFAULT_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M:%S";
+            inline static const uint16_t DEFAULT_TIMESTAMP_FORMAT_SECONDS_DIVIDER = 9;
+
         public:
 
             ModelUtils() = delete;
@@ -30,6 +35,8 @@ namespace exqudens::log::util {
                 const std::string& timestampFormat,
                 uint16_t timestampFormatSecondsDivider
             );
+
+            static std::map<std::string, exqudens::log::model::FormatterConfiguration::Parameter> defaultFormatterParameters();
 
             static std::map<std::string, exqudens::log::model::FormatterConfiguration> defaultFormatterConfigurations(
                 const std::string& format,
@@ -64,6 +71,10 @@ namespace exqudens::log::util {
                 const std::function<std::shared_ptr<exqudens::log::service::IHandlerService>(const exqudens::log::model::Handler&)>& createHandlerFunction
             );
 
+            static exqudens::log::model::Service defaultServiceModel(
+                const exqudens::log::model::Configuration& config
+            );
+
             static std::map<std::string, exqudens::log::model::Logger> toLoggerMap(const exqudens::log::model::Service& config);
 
     };
@@ -76,6 +87,8 @@ namespace exqudens::log::util {
 #include <filesystem>
 
 #include "exqudens/log/model/Constant.hpp"
+#include "exqudens/log/service/ConsoleHandlerService.hpp"
+#include "exqudens/log/service/FileHandlerService.hpp"
 
 #define CALL_INFO std::string(__FUNCTION__) + "(" + std::filesystem::path(__FILE__).filename().string() + ":" + std::to_string(__LINE__) + ")"
 
@@ -156,6 +169,14 @@ namespace exqudens::log::util {
             }
 
             return result;
+        } catch (...) {
+            std::throw_with_nested(std::runtime_error(CALL_INFO));
+        }
+    }
+
+    EXQUDENS_LOG_INLINE std::map<std::string, exqudens::log::model::FormatterConfiguration::Parameter> ModelUtils::defaultFormatterParameters() {
+        try {
+            return defaultFormatterParameters(DEFAULT_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT_SECONDS_DIVIDER);
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }
@@ -298,6 +319,25 @@ namespace exqudens::log::util {
         } catch (...) {
             std::throw_with_nested(std::runtime_error(CALL_INFO));
         }
+    }
+
+    EXQUDENS_LOG_INLINE exqudens::log::model::Service ModelUtils::defaultServiceModel(const exqudens::log::model::Configuration& config) {
+        return defaultServiceModel(
+            config,
+            [](const exqudens::log::model::Handler& arg0) {
+                std::shared_ptr<exqudens::log::service::IHandlerService> result = nullptr;
+                result = std::make_unique<exqudens::log::service::ConsoleHandlerService>();
+                result->configure(arg0);
+                return result;
+            },
+            [](const exqudens::log::model::Handler& arg0) {
+                std::shared_ptr<exqudens::log::service::IHandlerService> result = nullptr;
+                result = std::make_unique<exqudens::log::service::FileHandlerService>();
+                result->configure(arg0);
+                return result;
+            },
+            {}
+        );
     }
 
     EXQUDENS_LOG_INLINE std::map<std::string, exqudens::log::model::Logger> ModelUtils::toLoggerMap(const exqudens::log::model::Service& config) {

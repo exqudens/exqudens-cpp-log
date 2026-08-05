@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string>
+#include <optional>
+#include <filesystem>
+
 #include <gtest/gtest.h>
 
 #include "TestUtils.hpp"
@@ -10,6 +14,34 @@ class LoggingIntegrationTests: public testing::Test {
     protected:
 
         inline static const char* LOGGER_ID = "LoggingIntegrationTests";
+
+    private:
+
+        inline static std::optional<std::string> defaultWorkingDirectory = {};
+
+    public:
+
+        static void SetUpTestSuite() {
+            defaultWorkingDirectory = std::filesystem::current_path().generic_string();
+        }
+
+        static void TearDownTestSuite() {
+            std::filesystem::current_path(std::filesystem::path(defaultWorkingDirectory.value()));
+        }
+
+    protected:
+
+        void SetUp() override {
+            std::string currentTestGroup = testing::UnitTest::GetInstance()->current_test_info()->test_suite_name();
+            std::string currentTestCase = testing::UnitTest::GetInstance()->current_test_info()->name();
+            std::string currentTestOutputDir = TestUtils::getTestOutputDir(currentTestGroup, currentTestCase).value();
+            std::filesystem::create_directories(std::filesystem::path(currentTestOutputDir));
+            std::filesystem::current_path(std::filesystem::path(currentTestOutputDir));
+        }
+
+        void TearDown() override {
+            std::filesystem::current_path(std::filesystem::path(defaultWorkingDirectory.value()));
+        }
 
 };
 
@@ -24,9 +56,11 @@ TEST_F(LoggingIntegrationTests, test_1) {
         std::string testInputDir = TestUtils::getTestInputDir(testGroup, testCase).value();
         std::string testInputJsonFile = std::filesystem::path(testInputDir).append("value.json").generic_string();
         std::string testInputJson = TestUtils::readFileString(testInputJsonFile);
-        std::cout << LOGGER_ID << " testInputJson: '" << testInputJson << "'" << std::endl;
 
-        //exqudens::log::api::Logging::configure(testInputJson);
+        std::string loggingConfigType = exqudens::log::api::Logging::configure(testInputJson);
+        EXQUDENS_LOG(LOGGER_ID, 6) << " loggingConfigType: '" << loggingConfigType << "'";
+
+        ASSERT_TRUE(exqudens::log::api::Logging::isConfigured());
 
         std::cout << LOGGER_ID << " " << '"' << testGroup << '.' << testCase << '"' << " end" << std::endl;
     } catch (const std::exception& e) {
